@@ -89,8 +89,9 @@ dups <- form_site_info_prep %>%
 # view(dups)
 
 #delete dups
-form_site_info_prep <- form_site_info_prep[-c(22,23,8), ]
-view(form_site_info_prep)
+form_site_info_prep2 <- form_site_info_prep %>%
+  dplyr::filter(!rowid %in% c(22,23,8))
+view(form_site_info_prep2)
 
 # not sure why it is identifying the ef sites in Gramaphone as dupes... Looks like row 4 is the only real issue so we pull it out and
 
