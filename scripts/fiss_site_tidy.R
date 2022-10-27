@@ -88,10 +88,6 @@ dups <- form_site_info_prep %>%
 # unhash below to have a look
 # view(dups)
 
-#delete dups
-form_site_info_prep <- form_site_info_prep[-c(22,23,8), ]
-view(form_site_info_prep)
-
 # not sure why it is identifying the ef sites in Gramaphone as dupes... Looks like row 4 is the only real issue so we pull it out and
 
 # make the loc form
