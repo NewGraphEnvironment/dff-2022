@@ -88,11 +88,12 @@ dups <- form_site_info_prep %>%
 # unhash below to have a look
 # view(dups)
 
-#delete dups
-form_site_info_prep <- form_site_info_prep[-c(22,23,8), ]
-view(form_site_info_prep)
+#filter out the dups by rowid, not the best way to do it because the rows could change if data is added but will do for now
+form_site_info_prep2 <- form_site_info_prep %>%
+  dplyr::filter(!rowid %in% c(6,8,22,23))
+#view(form_site_info_prep2)
 
-# not sure why it is identifying the ef sites in Gramaphone as dupes... Looks like row 4 is the only real issue so we pull it out and
+# not sure why it is identifying the ef sites in Gramaphone as dupes...
 
 # make the loc form
 form_loc <- bind_rows(
@@ -105,8 +106,7 @@ form_loc <- bind_rows(
     mutate(survey_date = lubridate::as_date(survey_date)) %>%
     slice(0),
 
-  form_site_info_prep %>%
-  filter(rowid != 4) %>%
+  form_site_info_prep2 %>%
     # alias local name is not called the same in both sheets so rename
     rename(alias_local_name = local_name) %>%
     select(rowid,
@@ -127,8 +127,7 @@ form_site <- bind_rows(
     pluck(4) %>%
     slice(0),
 
-  form_site_info_prep %>%
-    filter(rowid != 4) %>%
+  form_site_info_prep2 %>%
     select(rowid,
            dplyr::any_of(form_raw_names_site),
            # add the time to help put the puzzle together after)
@@ -139,7 +138,7 @@ form_site <- bind_rows(
   # join the comments
   dplyr::mutate(comments = case_when(
     !is.na(comments_2) ~ paste0(comments, '. ', comments_2, '. ', time),
-     T ~ paste0(comments, '. ', time))) %>%
+    T ~ paste0(comments, '. ', time))) %>%
   # there is a messed up coordinate because it was on my way home and out of the crs
   filter(survey_date != '2022-09-16') %>%
   select(rowid, everything())
