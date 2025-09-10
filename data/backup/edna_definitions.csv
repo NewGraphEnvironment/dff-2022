@@ -1,0 +1,57 @@
+table_name,column_name,name,variant,widget,description
+form_edna,site_id,Site ID,QVariant.String,,"Unique identifier for the site and sample (ex. 1234_us).  If there are replicates for the sample append a letter to the end of the site ID (ex. 1234_us_a, 1234_us_b).  Use PSCIS crossing number if present and modelled_crossing_id if pscis id not present.  Choose adjacent crossing."
+form_edna,stream_name,Stream Name,QVariant.String,,"GNIS name of stream or local name (ie. Richfield Creek, Tributary to Hanson Creek)"
+form_edna,site_description_general,,QVariant.Int,,Short description of the site with reference landmarks identified.
+form_edna,site_description_habitat_type,,QVariant.String,,"Type of habitat sampled. Choose one of riffle, pool, glide, cascade."
+form_edna,date_time_sample,,Qvariant.DateTime,DateTime,Date and time sample was taken.  Ideally this coincides with surveyors location which can be cross-referenced with GPS track.
+form_edna,date_time_storage,,Qvariant.DateTime,DateTime,Date and time sample was put in storage (bottle or filter)
+form_edna,depth_sample,,QVariant.Double,,Depth below surface that sample is taken in metres.
+form_edna,crew_members_sample,,QVariant.String,,Initials of crew member collecting samples with person having phone being the first. Separate initials with space.
+form_edna,crew_members_filter,,QVariant.String,,Initials of crew members filtering samples with person having phone being the first. Separate initials with space.
+form_edna,mergin_user,,QVariant.String,,Default from mergin.
+form_edna,camera_id,,QVariant.String,,Initials of the person to whom the camera belongs to. Defaults to mergin_user.
+form_edna,gps_id,,QVariant.String,,Initials of the person to whom the GPS belongs to. Defaults to mergin_user
+form_edna,gps_waypoint_id,,QVariant.String,,ID of the waypoint in the GPS.
+form_edna,method_sample,,QVariant.String,,Grab sample in bottles or on-site filtration. Defaults to on-site filtration.
+form_edna,method_preservation,,QVariant.String,,Type of preservative or drying agent (ex. silica)
+form_edna,utm_zone,,QVariant.Int,,UTM Zone (WGS 84)
+form_edna,utm_easting,,QVariant.Double,,UTM Easting (WGS 84)
+form_edna,utm_northing,,QVariant.Double,,UTM Northing (WGS 84)
+form_edna,filter_size_um,,QVariant.Double,,Size of filter in microns.
+form_edna,filter_type,,QVariant.String,,"Type of filter (ex. MCE, glass fibre)"
+form_edna,filter_size_prefilter_um,,QVariant.Double,,Size of pre-filter in microns.  Leave empty if no pre-filter used.
+form_edna,filter_volume_l,,QVariant.Double,,Volume of water filtered to get sample in litres.
+form_edna,filter_time_start,,Qvariant.DateTime,,Time that filtering began
+form_edna,filter_time_end,,Qvariant.DateTime,,Time that filtering ended.
+form_edna,filter_time,,QVariant.Double,,Total filter time in seconds. Can be derived from filter_time_end - filter_time_start
+form_edna,species_target,,QVariant.String,,Species is to be tested for in laboratory. Use species codes from FDIQ seperated by spaces
+form_edna,control_blank_field,,QVariant.Bool,,True or false of whether the sample is a field blank (ie sample is distilled water filtered in field setting to test for contamination). Defaults to false.
+form_edna,control_blank_office,,QVariant.Bool,,True or false of whether the sample is a office blank as part of QA (ie. sample of distilled water was filtered in sterile environment with minimal chance of contamination). Defaults to false.
+form_edna,control_species_present_field,,QVariant.String,,Species is known to be present in water sampled. Species codes from FDIQ seperated by spaces
+form_edna,species_detected_lab,,QVariant.String,,Species detected by the lab. Species codes from FDIQ seperated by spaces.
+form_edna,temperature,,QVariant.Double,,Water temperature to one decimal place.
+form_edna,conductivity_us,,QVariant.Double,,Conductivity in microsiemens. No decimals.
+form_edna,ph,,QVariant.Double,,pH to one decimal
+form_edna,tubidity_ntu,,QVariant.Double,,Turbidity in NTUs.
+form_edna,comments_field,,QVariant.String,,Relevent comments from the sampling crew (ex. sample depth varied from 10 - 20 cm).  Electrofishing conducted on same day.
+form_edna,assessment_electrofishing,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+form_edna,assessment_habitat,,QVariant.Bool,,True or false of whether habitat_assessment was conducted at this site in same field season.
+form_edna,assessment_stream_crossing,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+form_edna,assessment_uav_flight,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+form_edna,assessment_benthic,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+form_edna,lab_id,,QVariant.String,,Name of lab conducting analysis.
+form_edna,date_lab_submitted,,Qvariant.DateTime,,Date sample was submitted to lab
+form_edna,date_lab_processed,,Qvariant.DateTime,,Date sample was analyzed by lab.
+form_edna,comments_lab,,QVariant.String,,Relevant comments received from the lab.  Will need to added to table following analysis.
+form_edna,photo_site,,QVariant.String,,Typical view of the site from the shore with points of reference in the background
+form_edna,photo_upstream,,QVariant.String,,View upstream from the site.
+form_edna,photo_downstream,,QVariant.String,,View downstream from the site.
+form_edna,photo_extra1,,QVariant.String,,Extra photo taken at site. Add 1-3 word description in photo_extra1_tag.
+form_edna,photo_extra1_tag,,QVariant.String,,1-3 word description of photo_extra1
+form_edna,photo_extra2,,QVariant.String,,Extra photo taken at site. Add 1-3 word description in photo_extra2_tag.
+form_edna,photo_extra2_tag,,QVariant.String,,1-3 word description of photo_extra2
+form_edna,photo_extra3,,QVariant.String,,Extra photo taken at site. Add 1-3 word description in photo_extra3_tag.
+form_edna,photo_extra3_tag,,QVariant.String,,1-3 word description of photo_extra3
+form_edna,methods_link1,,QVariant.String,,Link to relevant methods
+form_edna,methods_link2,,QVariant.String,,Link to relevant methods
+form_edna,methods_link3,,QVariant.String,,Link to relevant methods
