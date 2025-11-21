@@ -13,7 +13,7 @@ GR,,,UNBC,GRAY1-R17A- FAM,,,,,
 GR,,,UNBC,GRAY2-HEX,,,,,
 WSG,,,UNBC,,,,,FAM,
 WSG,,,UNBC,,,,,VIC,
-BB,,,UNBC,,,,,FAM,Not tested
+BB,,,UNBC,,,,,FAM,Not tested 
 DV,,,UNBC,BUT-VIC,,,,,Also tests for BT but does not distinguish
 ,,,UNBC,COCL-CYTB-VIC,,,,,Need to determine species 
 PK,,,UNBC,,,,,,
