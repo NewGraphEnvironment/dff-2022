@@ -1,4 +1,4 @@
-# sern_peace_fwcp_2023
+########## sern_peace_fwcp_2023###################
 -- time ./bcdata.sh "'CRKD', 'CARP', 'PARS'" && time ./background_layers.sh "'CRKD', 'CARP','PARS'"
 
 time ./rfp_source_bcdata.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'" && time ./rfp_source_aws.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'" && time ./rfp_source_fwa.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'"
@@ -10,6 +10,32 @@ time ./rfp_source_bcdata.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PC
 mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/sern_peace_fwcp_2023/background_layers.gpkg
 mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/sern_peace_fwcp_2023/habitat_lateral.tif
 
+###### sern_fraser_2024 ####################
+cp ~/Projects/gis/sern_fraser_2024/background_layers.gpkg ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg
+
+./rfp_source_bcdata.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL', 'LSAL'" && /
+./rfp_source_aws.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL', 'LSAL'" && /
+./rfp_source_fwa.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL', 'LSAL'"
+
+time ./rfp_qgis_create.sh "sern_fraser_2024" "bcrestoration_mobile.qgs"
+
+mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/sern_fraser_2024/background_layers.gpkg
+mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/sern_fraser_2024/habitat_lateral.tif
+
+
+########## sern_skeena_2023 ##################
+cp ~/Projects/gis/sern_skeena_2023/background_layers.gpkg ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg
+
+./rfp_source_bcdata.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'" "update" && \
+./rfp_source_aws.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'" && \
+./rfp_source_fwa.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'" "update"
+
+mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/sern_skeena_2023/background_layers.gpkg
+mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/sern_skeena_2023/habitat_lateral.tif
+
+
+
+
 time ./bcdata.sh "'LARL', 'SLOC', 'KOTL'" && time ./background_layers.sh  "'LARL', 'SLOC', 'KOTL'"
 
 # sern_simpcw_2023
@@ -18,7 +44,7 @@ time ./bcdata.sh "'ADMS', 'MORK', 'UFRA', 'CANO', 'LNTH', 'UNTH', 'MURT', 'CLWR'
 # sern_simpcw_2023 updates in summer 2024 (before migration to single project)
 cp ~/Projects/gis/sern_simpcw_2023/background_layers.gpkg ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg
 
-time ./rfp_source_bcdata.sh "'ADMS', 'MORK', 'UFRA', 'CANO', 'LNTH', 'UNTH', 'MURT', 'CLWR', 'CLRH', 'REVL'" && time time ./rfp_source_aws.sh  "'ADMS', 'MORK', 'UFRA', 'CANO', 'LNTH', 'UNTH', 'MURT', 'CLWR', 'CLRH', 'REVL'"
+time ./rfp_source_bcdata.sh "'ADMS', 'MORK', 'UFRA', 'CANO', 'LNTH', 'UNTH', 'MURT', 'CLWR', 'CLRH', 'REVL'" && time ./rfp_source_aws.sh  "'ADMS', 'MORK', 'UFRA', 'CANO', 'LNTH', 'UNTH', 'MURT', 'CLWR', 'CLRH', 'REVL'"
 
 mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/sern_simpcw_2023/background_layers.gpkg
 mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/sern_simpcw_2023/habitat_lateral.tif
@@ -40,32 +66,13 @@ mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/sern
 # test_revl_clrh_2023
 time ./bcdata.sh "'REVL', 'CLRH'" && time ./background_layers.sh  "'REVL', 'CLRH'"
 
-# sern_skeena_2023
 
-cp ~/Projects/gis/sern_skeena_2023/background_layers.gpkg ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg
-
-
-# bcdata only
-./rfp_source_bcdata.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'"
-
-mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/sern_skeena_2023/background_layers.gpkg
-
-
-time ./rfp_source_bcdata.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'" && ./rfp_source_aws.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'"
 
 
 # update select bcdata layers
 time ./bcdata_update.sh "'BABL','BABR','BULK','KISP','KLUM','LKEL','LSKE','MORR','MSKE','SUST','USKE','ZYMO'"
 
-# sern_fraser_2024
-cp ~/Projects/gis/sern_fraser_2024/background_layers.gpkg ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg
 
-
-##./rfp_source_bcdata.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL'" && ./rfp_source_aws.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL'" && time ./rfp_qgis_create.sh "sern_fraser_2024" "bcrestoration_mobile.qgs"
-
-./rfp_source_bcdata.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL', 'LSAL'" && ./rfp_source_aws.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL', 'LSAL'" && time ./rfp_source_fwa.sh "'LCHL', 'NECR', 'FRAN', 'MORK', 'UFRA', 'TABR', 'WILL', 'LSAL'"
-mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/sern_fraser_2024/background_layers.gpkg
-mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/sern_fraser_2024/habitat_lateral.tif
 
 # 20241031
 
