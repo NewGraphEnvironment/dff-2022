@@ -19,7 +19,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p out
-          cp data/data/edna_assays.csv out/
+          cp data/edna_assays.csv out/
 
       - name: Derive destination dir from repo name
         shell: bash
