@@ -1,4 +1,4 @@
-name: Mirror data/watershed_resources.csv → m1rr0r (true sync)
+name: Mirror dir/file → m1rr0r (true sync)
 
 on:
   push:
