@@ -16,16 +16,18 @@ mergin create newgraph/sern_fraser_2024 --from-dir ~/Projects/gis/sern_fraser_20
 # invite collaborators
 # ---------------
 # executed from project directory with .mergin file present
-mergin share-add newgraph/sern_fraser_2024 newgraph_bute --permissions writer
-mergin share-add newgraph/sern_fraser_2024 newgraph_lschick --permissions writer
-mergin share-add newgraph/sern_fraser_2024 snorris --permissions writer
-mergin share-add newgraph/sern_fraser_2024 seanwong --permissions writer
-mergin share-add newgraph/sern_fraser_2024 sern_bgeldart --permissions writer
-mergin share-add newgraph/sern_fraser_2024 Jmdegagne --permissions writer
-mergin share-add newgraph/sern_fraser_2024 Alexandras --permissions writer
-mergin share-add newgraph/sern_fraser_2024 tdonald --permissions writer
+mergin share-add newgraph/sern_fraser_2024 newgraph_bute --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 newgraph_lschick --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 snorris --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 seanwong --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 sern_bgeldart --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 jmdegagn --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 Alexandras --permissions writer /
+mergin share-add newgraph/sern_fraser_2024 tdonald --permissions writer /
 mergin share-add newgraph/sern_fraser_2024 rivershed_jmarquis --permissions writer
-mergin share-add newgraph/sern_fraser_2024 Mya Eastmure --permissions writer
+
+#mya may need quote in name to get over the space....
+# mergin share-add newgraph/sern_fraser_2024 Mya Eastmure --permissions writer
 # ---------------
 # sync changes
 # ---------------
