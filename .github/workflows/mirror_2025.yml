@@ -1,0 +1,41 @@
+name: Mirror data/watershed_resources.csv → m1rr0r (true sync)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'data/edna_assays.csv'
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage only the CSV
+        shell: bash
+        run: |
+          mkdir -p out
+          cp data/data/edna_assays.csv out/
+
+      - name: Derive destination dir from repo name
+        shell: bash
+        run: |
+          repo_name="${GITHUB_REPOSITORY##*/}"
+          echo "DEST_DIR=${repo_name}/data" >> $GITHUB_ENV
+          echo "Destination: ${repo_name}/data"
+
+      - name: Publish CSV (sync with deletions) to m1rr0r
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.MIRROR_PUSH_TOKEN }}
+          external_repository: NewGraphEnvironment/m1rr0r
+          publish_branch: main
+          publish_dir: ./out
+          destination_dir: ${{ env.DEST_DIR }}  # results in .../<repo>/data/watershed_resources.csv
+          keep_files: false                     # deletes other files under .../<repo>/data
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
