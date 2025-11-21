@@ -14,3 +14,4 @@ data/lidar/*
 *.tif
 scripts/qgis/hold/*
 !data/qgis/*.gpkg
+scripts/qgis/*.gpkg*
