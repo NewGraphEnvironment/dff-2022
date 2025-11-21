@@ -1,0 +1,57 @@
+﻿name,alias,variant,widget,comment
+site_id,Site ID,QVariant.String,,"Unique identifier for the site and sample (ex. 1234_us).  If there are replicates for the sample append a letter to the end of the site ID (ex. 1234_us_a, 1234_us_b)"
+stream_name,Stream Name,QVariant.String,,"GNIS name of stream or local name (ie. Richfield Creek, Tributary to Hanson Creek)"
+site_description_general,,QVariant.Int,,Short description of the site with reference landmarks identified.
+site_description_habitat_type,,QVariant.String,,"Type of habitat sampled. Choose one of riffle, pool, glide, cascade."
+date_time_sample,,Qvariant.DateTime,DateTime,Date and time sample was taken.  Ideally this coincides with surveyors location which can be cross-referenced with GPS track.
+date_time_storage,,Qvariant.DateTime,DateTime,Date and time sample was put in storage (bottle or filter)
+depth_sample,,QVariant.Double,,Depth below surface that sample is taken in metres.
+crew_members_sample,,QVariant.String,,Initials of crew member collecting samples with person having phone being the first. Separate initials with space.
+crew_members_filter,,QVariant.String,,Initials of crew members filtering samples with person having phone being the first. Separate initials with space.
+mergin_user,,QVariant.String,,Default from mergin.
+camera_id,,QVariant.String,,Initials of the person to whom the camera belongs to. Defaults to mergin_user.
+gps_id,,QVariant.String,,Initials of the person to whom the GPS belongs to. Defaults to mergin_user
+gps_waypoint_id,,QVariant.String,,ID of the waypoint in the GPS.
+method_sample,,QVariant.String,,Grab sample in bottles or on-site filtration. Defaults to on-site filtration.
+method_preservation,,QVariant.String,,Type of preservative or drying agent (ex. silica)
+utm_zone,,QVariant.Int,,UTM Zone (WGS 84) 
+utm_easting,,QVariant.Double,,UTM Easting (WGS 84) 
+utm_northing,,QVariant.Double,,UTM Northing (WGS 84) 
+filter_size_um,,QVariant.Double,,Size of filter in microns.
+filter_type,,QVariant.String,,"Type of filter (ex. MCE, glass fibre)"
+filter_size_prefilter_um,,QVariant.Double,,Size of pre-filter in microns.  Leave empty if no pre-filter used.
+filter_volume_l,,QVariant.Double,,Volume of water filtered to get sample in litres.
+filter_time_start,,Qvariant.DateTime,,Time that filtering began
+filter_time_end,,Qvariant.DateTime,,Time that filtering ended.
+filter_time,,QVariant.Double,,Total filter time in seconds. Can be derived from filter_time_end - filter_time_start 
+species_target,,QVariant.String,,Species is to be tested for in laboratory. Use species codes from FDIQ seperated by spaces
+control_blank_field,,QVariant.Bool,,True or false of whether the sample is a field blank (ie sample is distilled water filtered in field setting to test for contamination). Defaults to false.
+control_blank_office,,QVariant.Bool,,True or false of whether the sample is a office blank as part of QA (ie. sample of distilled water was filtered in sterile environment with minimal chance of contamination). Defaults to false.
+control_species_present_field,,QVariant.String,,Species is known to be present in water sampled. Species codes from FDIQ seperated by spaces
+species_detected_lab,,QVariant.String,,Species detected by the lab. Species codes from FDIQ seperated by spaces.
+temperature,,QVariant.Double,,Water temperature to one decimal place.
+conductivity_us,,QVariant.Double,,Conductivity in microsiemens. No decimals.
+ph,,QVariant.Double,,pH to one decimal
+tubidity_ntu,,QVariant.Double,,Turbidity in NTUs.
+comments_field,,QVariant.String,,Relevent comments from the sampling crew (ex. sample depth varied from 10 - 20 cm).  Electrofishing conducted on same day.
+electrofishing,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+assessment_habitat,,QVariant.Bool,,True or false of whether habitat_assessment was conducted at this site in same field season.
+assessment_stream_crossing,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+assessment_uav_flight,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+assessment_benthic,,QVariant.Bool,,True or false of whether electrofishing was conducted at this site in same field season.
+lab_id,,QVariant.String,,Name of lab conducting analysis.
+date_lab_submitted,,Qvariant.DateTime,,Date sample was submitted to lab
+date_lab_processed,,Qvariant.DateTime,,Date sample was analyzed by lab.
+comments_lab,,QVariant.String,,Relevant comments received from the lab.  Will need to added to table following analysis.
+photo_site,,QVariant.String,,Typical view of the site from the shore with points of reference in the background
+photo_upstream,,QVariant.String,,View upstream from the site.
+photo_downstream,,QVariant.String,,View downstream from the site.
+photo_extra1,,QVariant.String,,Extra photo taken at site. Add 1-3 word description in photo_extra1_tag.
+photo_extra1_tag,,QVariant.String,,1-3 word description of photo_extra1
+photo_extra2,,QVariant.String,,Extra photo taken at site. Add 1-3 word description in photo_extra2_tag.
+photo_extra2_tag,,QVariant.String,,1-3 word description of photo_extra2
+photo_extra3,,QVariant.String,,Extra photo taken at site. Add 1-3 word description in photo_extra3_tag.
+photo_extra3_tag,,QVariant.String,,1-3 word description of photo_extra3
+methods_link1,,QVariant.String,,Link to relevant methods
+methods_link2,,QVariant.String,,Link to relevant methods
+methods_link3,,QVariant.String,,Link to relevant methods
