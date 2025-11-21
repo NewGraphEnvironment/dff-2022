@@ -1,6 +1,6 @@
 bcfishpass.crossings_vw
 bcfishpass.streams_vw
-whse_cadastre.pmbc_parcel_fabric_poly_svw
+#whse_cadastre.pmbc_parcel_fabric_poly_svw
 whse_basemapping.transport_line
 whse_fish.fiss_obstacles_pnt_sp
 whse_forest_tenure.ften_range_poly_carto_vw
