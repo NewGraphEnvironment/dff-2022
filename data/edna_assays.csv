@@ -1,0 +1,18 @@
+﻿sp_code,sp_common,sp_scientific,assay_lab,assay_id,assay_sp,assay_gene,assay_author,assay_dye,notes
+CH,,,UNBC,CHIN-CO1-HEL-FAM,,,,,
+CH,,,UNBC,CHIN-CO1-LAR-VIC,,,,,
+CO,,,UNBC,COHO-CYTB-PIL-FAM,,,,,
+CO,,,UNBC,COHO-CO1-HEL-VIC,,,,,
+SK,,,UNBC,SOCK-CYTC-OXIII-FAM,,,,,
+SK,,,UNBC,SOCK-CO1-HEL-VIC,,,,,
+KO,,,UNBC,SOCK-CYTC-OXIII-FAM,,,,,
+KO,,,UNBC,SOCK-CO1-HEL-VIC,,,,,
+RB,,,UNBC,RAIN-COI-HEL-VIC,,,,,
+BT,,,UNBC,BUT-VIC,,,,,Also tests for DV but does not distinguish
+GR,,,UNBC,GRAY1-R17A- FAM,,,,,
+GR,,,UNBC,GRAY2-HEX,,,,,
+WSG,,,UNBC,,,,,,
+BB,,,UNBC,,,,,FAM,Not tested
+DV,,,UNBC,BUT-VIC,,,,,Also tests for BT but does not distinguish
+,,,UNBC,COCL-CYTB-VIC,,,,,Need to determine species
+PK,,,UNBC,,,,,,
