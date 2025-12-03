@@ -1,19 +1,19 @@
-﻿sp_code,sp_common,sp_scientific,assay_lab,assay_id,assay_sp,assay_gene,assay_author,assay_dye,notes
-CH,,,UNBC,CHIN-CO1-HEL-FAM,,,,,
-CH,,,UNBC,CHIN-CO1-LAR-VIC,,,,,
-CO,,,UNBC,COHO-CYTB-PIL-FAM,,,,,
-CO,,,UNBC,COHO-CO1-HEL-VIC,,,,,
-SK,,,UNBC,SOCK-CYTC-OXIII-FAM,,,,,
-SK,,,UNBC,SOCK-CO1-HEL-VIC,,,,,
-KO,,,UNBC,SOCK-CYTC-OXIII-FAM,,,,,
-KO,,,UNBC,SOCK-CO1-HEL-VIC,,,,,
-RB,,,UNBC,RAIN-COI-HEL-VIC,,,,,
-BT,,,UNBC,BUT-VIC,,,,,Also tests for DV but does not distinguish
-GR,,,UNBC,GRAY1-R17A- FAM,,,,,
-GR,,,UNBC,GRAY2-HEX,,,,,
-WSG,,,UNBC,,,,,FAM,
-WSG,,,UNBC,,,,,VIC,
-BB,,,UNBC,,,,,FAM,Not tested 
-DV,,,UNBC,BUT-VIC,,,,,Also tests for BT but does not distinguish
-,,,UNBC,COCL-CYTB-VIC,,,,,Need to determine species 
-PK,,,UNBC,,,,,,
+﻿sp_code,sp_common,sp_scientific,assay_lab,assay_id,assay_sp,assay_gene,assay_author,assay_dye,assay_not_preferred,notes
+CH,,,UNBC,CHIN-CO1-HEL-FAM,,,,,,
+CH,,,UNBC,CHIN-CO1-LAR-VIC,,,,,,
+CO,,,UNBC,COHO-CYTB-PIL-FAM,,,,,,
+CO,,,UNBC,COHO-CO1-HEL-VIC,,,,,,
+SK,,,UNBC,SOCK-CYTC-OXIII-FAM,,,,,,Same as KO
+SK,,,UNBC,SOCK-CO1-HEL-VIC,,,,,,Same as KO
+KO,,,UNBC,SOCK-CYTC-OXIII-FAM,,,,,,Same as SK
+KO,,,UNBC,SOCK-CO1-HEL-VIC,,,,,,Same as SK
+RB,,,UNBC,RAIN-COI-HEL-VIC,,,,,,Currently (20251203) we are using this test for cuthrout as well.
+BT,,,UNBC,BUT-VIC,,,,,,Also tests for DV but does not distinguish
+GR,,,UNBC,GRAY1-R17A- FAM,,,,,,Caitlin indicated this Grayling assay performed better
+GR,,,UNBC,GRAY2-HEX-VIC,,,,,TRUE,Assumed VIC dye so added
+WSG,,,UNBC,,,,,FAM,,
+WSG,,,UNBC,,,,,VIC,,
+BB,,,UNBC,,,,,FAM,,Assay not yet tested in northern regions 
+DV,,,UNBC,BUT-VIC,,,,,,Also tests for BT but does not distinguish
+CCT,,,UNBC,COCL-CYTB-VIC,,,,,,Need to determine species of assay_id provided. Have guessed coastal cutthrout
+PK,,,UNBC,,,,,,,

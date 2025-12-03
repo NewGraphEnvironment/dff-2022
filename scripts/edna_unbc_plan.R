@@ -1,0 +1,214 @@
+# make map of site vs species ordered by the assay dye order to send to UNBC
+
+# read iin edna form
+d_raw <- readr::read_csv(
+  "~/Projects/repo/fish_passage_template_reporting/data/backup/2025/form_edna_2025.csv"
+) |>
+  dplyr::select(
+    site_id,
+    # date_time_sample,
+    species_target
+    # makes it easier to see where manual changes are helpful
+    # source
+  ) |>
+  dplyr::mutate(
+    # Replace commas and periods with spaces
+    species_target = stringr::str_replace_all(
+      species_target, "[,\\.]", " ") |>
+      # Collapse multiple spaces into a single space
+      stringr::str_replace_all("\\s+", " ") |>
+      # Trim leading/trailing spaces
+      stringr::str_trim() |>
+      # Convert to uppercase
+      stringr::str_to_upper()
+  ) |>
+  dplyr::arrange(site_id)
+
+# # Split, reorder by priority (fct_order), and collapse back
+# species_target = purrr::map_chr(
+#   stringr::str_split(species_target, " "),
+#   \(x) paste(intersect(fct_order, x), collapse = " ")
+# )
+# )
+
+# read in the map of assays
+path <- "~/Projects/repo/dff-2022/data/edna_assays.csv"
+assay_raw <- readr::read_csv(path) |>
+  # last string after dash is the assay_dye unless !is.na(assay_dye)
+  dplyr::mutate(
+    assay_id  = stringr::str_remove_all(assay_id, "\\s"),
+    assay_dye = ifelse(
+      is.na(assay_dye),
+      stringr::str_extract(assay_id, "(?<=-)[A-Z]+$"),
+      assay_dye
+    )) |>
+  # drop assays explicitly marked as not preferred
+  dplyr::filter(is.na(assay_not_preferred) | !assay_not_preferred)
+
+# now our goal is to run species together with equivalent dye types (fam or vic) and
+# not mix dies if not necessary.  We don't really want to used something if it is not preferred though
+site_species <- d_raw |>
+  dplyr::mutate(
+    # normalize spacing just in case
+    species_target = stringr::str_squish(species_target)
+  ) |>
+  tidyr::separate(
+    col  = species_target,
+    into = paste0("sp", 1:4),  # enough slots for "BT CH CO RB"
+    sep  = " ",
+    fill = "right"
+  ) |>
+  tidyr::pivot_longer(
+    cols = dplyr::starts_with("sp"),
+    names_to = "slot",
+    values_to = "sp_code",
+    values_drop_na = TRUE
+  ) |>
+  # !!!! here we are going to switch our CT to RB.  Reason for this is that we don't have information on assay for CT
+  # seems unbc is saying that they can't differentiate but they didn't provide assay so we just use RB and go with that
+  dplyr::mutate(sp_code = stringr::str_replace_all(sp_code, "CT", "RB")) |>
+  dplyr::select(site_id, sp_code) |>
+  dplyr::arrange(site_id, sp_code)
+
+# simple map of species to assay options
+assay_map <- assay_raw |>
+  dplyr::mutate(
+    # belt + suspenders: remove whitespace again
+    assay_id    = stringr::str_remove_all(assay_id, "\\s"),
+    dye_from_id = stringr::str_extract(assay_id, "(?<=-)[A-Z]+$"),
+    assay_dye   = dplyr::coalesce(assay_dye, dye_from_id)
+  ) |>
+  dplyr::distinct(sp_code, assay_id, assay_dye, notes)
+
+# join the sites to all assay options
+assay_site_map <- site_species |>
+  dplyr::left_join(
+    assay_map,
+    by = "sp_code"
+  )|>
+  dplyr::arrange(site_id, sp_code)
+
+# # remove duplicates and understand how many runs for each species to enable efficient dye use
+# site_dye_species_count <- assay_site_map |>
+#   dplyr::distinct(site_id, sp_code, assay_dye) |>
+#   dplyr::count(site_id, assay_dye, name = "n_species")
+#
+# # see how many dyes per site:
+# site_dye_count <- assay_site_map |>
+#   dplyr::distinct(site_id, assay_dye) |>
+#   dplyr::count(site_id, name = "n_dyes")
+
+## 1) Decide preferred dye per site (based on how many FAM vs VIC options exist)
+
+# overall most common dye, for tie-breaks
+dye_preferred <- assay_map |>
+  dplyr::count(assay_dye, name = "n") |>
+  dplyr::arrange(dplyr::desc(n)) |>
+  dplyr::pull(assay_dye) |>
+  dplyr::first()
+
+#
+site_pref <- assay_site_map |>
+  dplyr::group_by(site_id) |>
+  dplyr::summarise(
+    n_fam = sum(assay_dye == "FAM", na.rm = TRUE),
+    n_vic = sum(assay_dye == "VIC", na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  dplyr::mutate(
+    site_pref_dye = dplyr::case_when(
+      n_fam >  n_vic ~ "FAM",
+      n_vic >  n_fam ~ "VIC",
+      TRUE          ~ dye_preferred  # tie / no info
+    )
+  )
+
+## 2) For each site + species, keep ONE row:
+##    if there are 2 dyes, keep the one that matches site_pref_dye
+
+site_chosen <- assay_site_map |>
+  dplyr::left_join(site_pref, by = "site_id") |>
+  dplyr::group_by(site_id, sp_code) |>
+  dplyr::arrange(
+    site_id,
+    sp_code,
+    dplyr::desc(assay_dye == site_pref_dye)  # preferred dye first if it exists
+  ) |>
+  dplyr::slice(1) |>   # keep just one dye per site/species
+  dplyr::ungroup() |>
+  dplyr::select(site_id, sp_code, assay_id, assay_dye, notes)
+
+## 3) Assign run_number so all same-dye species at a site share a number
+##    (if all one dye → everything is run_number = 1)
+
+site_ordered <- site_chosen |>
+  dplyr::group_by(site_id) |>
+  dplyr::mutate(
+    n_fam = sum(assay_dye == "FAM", na.rm = TRUE),
+    n_vic = sum(assay_dye == "VIC", na.rm = TRUE),
+    dye_priority = dplyr::case_when(
+      is.na(assay_dye) ~ 3L,
+      n_fam >= n_vic & assay_dye == "FAM" ~ 1L,
+      n_fam >= n_vic & assay_dye == "VIC" ~ 2L,
+      n_vic >  n_fam & assay_dye == "VIC" ~ 1L,
+      n_vic >  n_fam & assay_dye == "FAM" ~ 2L
+    ),
+    run_number = dye_priority
+  ) |>
+  dplyr::arrange(site_id, run_number, sp_code) |>
+  dplyr::ungroup() |>
+  dplyr::select(
+    site_id,
+    run_number,   # all same-dye rows at a site share this
+    sp_code,
+    assay_id,
+    assay_dye,
+    notes
+  ) |>
+  dplyr::group_by(site_id) |>
+  dplyr::mutate(
+    site_pattern = paste(sort(unique(assay_dye[order(run_number)])), collapse = ">"),
+    run_order    = dplyr::row_number()
+  ) |>
+  dplyr::ungroup()
+
+# define the pattern that the dyes will be run in order as
+d_site_pattern <- site_ordered |>
+  dplyr::group_by(site_id) |>
+  dplyr::summarise(
+    site_pattern = assay_dye[order(run_number, sp_code)] |>
+      tolower() |>
+      paste(collapse = "_"),
+    .groups = "drop"
+  ) |>
+  dplyr::mutate(
+    site_pattern_id = as.integer(factor(site_pattern))
+  ) |>
+  dplyr::arrange(site_pattern_id, site_id)
+
+# finalize the plan that we are producing
+site_plan <- site_ordered |>
+  dplyr::group_by(site_id) |>
+  dplyr::mutate(
+    site_pattern = assay_dye[order(run_number, sp_code)] |>
+      tolower() |>
+      paste(collapse = "_"),
+    run_order = dplyr::row_number()
+  ) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(
+    site_pattern_id = as.integer(factor(site_pattern))
+  ) |>
+  dplyr::group_by(site_pattern_id, site_pattern) |>
+  dplyr::arrange(site_id, .by_group = TRUE) |>
+  dplyr::ungroup()
+
+
+# burn to the repo so we can point the lab to it
+path <- "data/backup/2025/edna_species_for_UNBC.csv"
+fs::dir_create(fs::path_dir(path))
+site_plan |>
+  readr::write_excel_csv(
+    path
+  )
+
