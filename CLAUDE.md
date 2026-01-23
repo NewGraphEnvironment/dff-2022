@@ -22,7 +22,7 @@ Forms are written as `.gpkg` files to QGIS project directories (typically `~/Pro
 ### QGIS Project Creation (Shell Scripts)
 Scripts in `scripts/qgis/` download BC government spatial data and create QGIS projects:
 
-**Environment setup** (run from `scripts/qgis/`):
+**Environment setup** (run from repo root):
 ```bash
 conda env create -f environment.yml
 conda activate dff
@@ -83,11 +83,13 @@ Load packages via `source('scripts/packages.R')`.
 
 The `fpr` package provides functions like `fpr_import_pscis_all()` and `fpr_import_hab_con()` for importing provincial templates.
 
-## Python/Conda Environments
+## Python/Conda Environment
 
-Two conda environments:
-- `dff2` (root `environment.yml`): mergin-client, bcdata - for Mergin Maps sync
-- `dff` (`scripts/qgis/environment.yml`): bcdata, geopandas, rasterio - for QGIS project creation
+Single unified conda environment `dff` (root `environment.yml`):
+- Supports both QGIS project creation (rfp scripts) and Mergin Maps sync
+- Includes: GDAL/fiona/rasterio CLI tools, mergin-client, bcdata
+- Create: `conda env create -f environment.yml`
+- Activate: `conda activate dff`
 
 ## Output Structure
 
@@ -99,15 +101,6 @@ Created QGIS projects go to `~/Projects/gis/{project_name}/` containing:
 - `ignore_mobile/` - Methods docs and templates (not synced to phones)
 
 ## Pending Tasks
-
-### Environment Consolidation (#186)
-- **Ready**: `environment_test_simplified.yml` is tested and working for both rfp scripts and mergin-client
-- **TODO**:
-  1. Rename `environment_test_simplified.yml` to `environment.yml` (replace root environment.yml)
-  2. Remove old conda environments: `dff`, `dff2`, `dff_test`, `dff_test_simplified`
-  3. Remove old environment files: `scripts/qgis/environment.yml`, `environment_test.yml`
-  4. Update CLAUDE.md to reflect single unified `dff` environment
-  5. Commit changes to close #186
 
 ### Performance Testing
 - **TODO**: Resolve #189 (handle veg_comp layer as unzipped .fgb)
