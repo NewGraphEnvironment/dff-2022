@@ -103,10 +103,10 @@ Created QGIS projects go to `~/Projects/gis/{project_name}/` containing:
 ## Pending Tasks
 
 ### Performance Testing
-- **TODO**: Resolve #189 (handle veg_comp layer as unzipped .fgb)
-- **TODO**: Run clean performance tests without veg_comp errors for accurate comparison (#188)
+- **TODO**: Resolve #189 (handle veg_comp layer as unzipped .fgb) - may be fixed upstream
+- **DONE**: ✅ Run clean performance tests without veg_comp errors (#188)
 - **TODO**: Test both methods (streaming vs download-first) with network contention (S3 backup running)
 
 ### SRED Documentation
-- **TODO**: Update commit-sred skill to be project/milestone aware like create-issue
-- **TODO**: Create SRED issue about LLM timing methodology for GIS workflow improvements
+- **DONE**: ✅ Update commit-sred skill to be project/milestone aware
+- **DONE**: ✅ Create SRED issue for performance benchmarking methodology (sred-2025-2026#8)
