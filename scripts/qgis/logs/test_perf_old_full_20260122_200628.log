@@ -1,0 +1,96 @@
+=== Performance Test: perf_old_full ===
+Watershed groups: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
+Template: bcrestoration_mobile.qgs
+Date: Thu Jan 22 20:06:28 PST 2026
+
+=== rfp_source_bcdata.sh ===
++ '[' 1 -eq 0 ']'
++ check_format ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'input='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ [[ ! 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Watershed groups format is correct: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ set +u
++ operation=generate
++ set -u
++ rm -f aoi.geojson reg_legal_and_admin_boundaries.qsoi_bc_regions.geojson whse_admin_boundaries.clab_indian_reserves.geojson whse_fish.pscis_assessment_svw.geojson
++ GPKG=background_layers.gpkg
++ SOURCES=rfp_source_bcdata.txt
++ [[ generate == \u\p\d\a\t\e ]]
++ [[ -f background_layers.gpkg ]]
++ [[ generate == \u\p\d\a\t\e ]]
++ echo 'Generating a new one...'
+Generating a new one...
++ process_geopackage ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'watersheds='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local operation=
++ echo 'Processing watershed group boundaries: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Processing watershed group boundaries: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ rm -f aoi.geojson
++ bcdata dump WHSE_BASEMAPPING.FWA_WATERSHED_GROUPS_POLY --query 'WATERSHED_GROUP_CODE in ('\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'')' -l
+./rfp_source_bcdata.sh: line 64: bcdata: command not found
+
+real	0m0.009s
+user	0m0.002s
+sys	0m0.003s
+
+=== rfp_source_aws.sh ===
++ '[' 1 -eq 0 ']'
++ check_format ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'input='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ [[ ! 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Watershed groups format is correct: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ GPKG=background_layers.gpkg
++ SOURCES=rfp_source_aws.txt
++ [[ ! -f background_layers.gpkg ]]
++ echo 'There should already be a file called background_layers.gpkg. Please provide.'
+There should already be a file called background_layers.gpkg. Please provide.
++ exit 1
+
+real	0m0.003s
+user	0m0.001s
+sys	0m0.001s
+
+=== rfp_source_fwa.sh ===
++ TARGET=background_layers.gpkg
++ '[' 1 -eq 0 ']'
++ check_format ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'input='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ [[ ! 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Watershed groups format is correct: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ set +u
++ operation=generate
++ set -u
++ [[ generate == \u\p\d\a\t\e ]]
++ [[ -f background_layers.gpkg ]]
++ [[ generate == \u\p\d\a\t\e ]]
++ echo 'Generating a new one...'
+Generating a new one...
++ process_geopackage ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'watersheds='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local operation=
++ echo 'Processing watershed group boundaries: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Processing watershed group boundaries: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ rm -f aoi.geojson
++ bcdata dump WHSE_BASEMAPPING.FWA_WATERSHED_GROUPS_POLY --query 'WATERSHED_GROUP_CODE in ('\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'')' -l
+./rfp_source_fwa.sh: line 55: bcdata: command not found
+
+real	0m0.103s
+user	0m0.002s
+sys	0m0.003s
+
+=== rfp_qgis_create.sh ===
++ '[' 2 -lt 2 ']'
++ PROJECT_NAME=perf_old_full
++ QGIS_FILE=bcrestoration_mobile.qgs
++ echo 'Generating QGIS project in Projects/gis/: perf_old_full' 'with QGIS file: bcrestoration_mobile.qgs'
+Generating QGIS project in Projects/gis/: perf_old_full with QGIS file: bcrestoration_mobile.qgs
++ mkdir -p /Users/airvine/Projects/gis/perf_old_full
++ mv 'background_layers.gpkg*' /Users/airvine/Projects/gis/perf_old_full/
+mv: cannot stat 'background_layers.gpkg*': No such file or directory
+
+real	0m0.021s
+user	0m0.002s
+sys	0m0.004s

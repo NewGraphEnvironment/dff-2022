@@ -1,0 +1,240 @@
+=== Performance Test: test_download ===
+Watershed groups: 'BULK', 'MORR', 'KLUM'
+Template: bcrestoration_mobile.qgs
+Date: Thu Jan 22 17:30:32 PST 2026
+
+=== rfp_source_bcdata.sh ===
++ '[' 1 -eq 0 ']'
++ check_format ''\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
++ local 'input='\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
++ [[ ! 'BULK', 'MORR', 'KLUM' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
+Watershed groups format is correct: 'BULK', 'MORR', 'KLUM'
++ set +u
++ operation=generate
++ set -u
++ rm -f aoi.geojson reg_legal_and_admin_boundaries.qsoi_bc_regions.geojson whse_admin_boundaries.clab_indian_reserves.geojson whse_fish.pscis_assessment_svw.geojson
++ GPKG=background_layers.gpkg
++ SOURCES=rfp_source_bcdata.txt
++ [[ generate == \u\p\d\a\t\e ]]
++ [[ -f background_layers.gpkg ]]
++ [[ generate == \u\p\d\a\t\e ]]
++ echo 'Generating a new one...'
+Generating a new one...
++ process_geopackage ''\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
++ local 'watersheds='\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
++ local operation=
++ echo 'Processing watershed group boundaries: '\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
+Processing watershed group boundaries: 'BULK', 'MORR', 'KLUM'
++ rm -f aoi.geojson
++ bcdata dump WHSE_BASEMAPPING.FWA_WATERSHED_GROUPS_POLY --query 'WATERSHED_GROUP_CODE in ('\''BULK'\'', '\''MORR'\'', '\''KLUM'\'')' -l
++ local update_option=
++ [[ '' == \u\p\d\a\t\e ]]
++ ogr2ogr -f GPKG background_layers.gpkg -overwrite -t_srs EPSG:3005 -nln whse_basemapping.fwa_watershed_groups_poly aoi.geojson
+++ fio info aoi.geojson --layer aoi --bounds
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:161: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  op = oneOf(" ".join(op_map.keys())).set_parse_action(
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:180: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  higher_func = oneOf(" ".join(higher_func_map.keys())).set_parse_action(
++ BOUNDS='777012.656 962946.677 1005784.525 1165199.106'
+++ echo '[777012.656 962946.677 1005784.525 1165199.106]'
+++ tr ' ,' ,
+++ rio transform --src_crs EPSG:3005 --dst_crs EPSG:4326
+++ tr -d '[] '
++ BOUNDS_LL=-129.38033259160906,53.62375711953149,-125.90826802812964,55.48346104379861
++ echo 'Getting BC Data Catalogue layers - this may take a while'
+Getting BC Data Catalogue layers - this may take a while
+++ grep -v '^#' rfp_source_bcdata.txt
++ BCGW_SOURCES='reg_legal_and_admin_boundaries.qsoi_bc_regions
+whse_admin_boundaries.clab_indian_reserves
+whse_fish.pscis_assessment_svw'
++ for layer in '$BCGW_SOURCES'
++ '[' '!' -f ./reg_legal_and_admin_boundaries.qsoi_bc_regions.geojson ']'
++ set -e
++ bcdata dump reg_legal_and_admin_boundaries.qsoi_bc_regions --bounds '777012.656 962946.677 1005784.525 1165199.106' --bounds-crs EPSG:3005 -l
++ for layer in '$BCGW_SOURCES'
++ '[' '!' -f ./whse_admin_boundaries.clab_indian_reserves.geojson ']'
++ set -e
++ bcdata dump whse_admin_boundaries.clab_indian_reserves --bounds '777012.656 962946.677 1005784.525 1165199.106' --bounds-crs EPSG:3005 -l
++ for layer in '$BCGW_SOURCES'
++ '[' '!' -f ./whse_fish.pscis_assessment_svw.geojson ']'
++ set -e
++ bcdata dump whse_fish.pscis_assessment_svw --bounds '777012.656 962946.677 1005784.525 1165199.106' --bounds-crs EPSG:3005 -l
++ find . -maxdepth 1 -type f -name '*.fwa_*' -size -50c -delete
+++ find . -maxdepth 1 -type f -name '*.geojson' -a '!' -name aoi.geojson -exec basename '{}' .geojson ';'
++ BCGW_SOURCES_CLEANED='whse_admin_boundaries.clab_indian_reserves
+whse_fish.pscis_assessment_svw
+reg_legal_and_admin_boundaries.qsoi_bc_regions'
++ for layer in '$BCGW_SOURCES_CLEANED'
++ [[ whse_admin_boundaries.clab_indian_reserves == *\.\f\w\a\_* ]]
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_admin_boundaries.clab_indian_reserves -dim XY -clipsrc aoi.geojson -clipsrclayer aoi whse_admin_boundaries.clab_indian_reserves.geojson
++ for layer in '$BCGW_SOURCES_CLEANED'
++ [[ whse_fish.pscis_assessment_svw == *\.\f\w\a\_* ]]
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_fish.pscis_assessment_svw -dim XY -clipsrc aoi.geojson -clipsrclayer aoi whse_fish.pscis_assessment_svw.geojson
++ for layer in '$BCGW_SOURCES_CLEANED'
++ [[ reg_legal_and_admin_boundaries.qsoi_bc_regions == *\.\f\w\a\_* ]]
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln reg_legal_and_admin_boundaries.qsoi_bc_regions -dim XY -clipsrc aoi.geojson -clipsrclayer aoi reg_legal_and_admin_boundaries.qsoi_bc_regions.geojson
++ echo 'Creating a record of the layers that were loaded'
+Creating a record of the layers that were loaded
+++ date '+%Y-%m-%d %H:%M'
++ TIMESTAMP='2026-01-22 17:30'
++ awk -v 'timestamp=2026-01-22 17:30' -v 'watershed_groups='\''BULK'\'', '\''MORR'\'', '\''KLUM'\''' -v source=rfp_source_bcdata.txt 'BEGIN{gsub(",", "", watershed_groups)} !/^#/ && NF > 0 {print timestamp "," $0 "," watershed_groups "," source}' rfp_source_bcdata.txt
++ sort -t, -k2,2 temp.csv
++ tail -n +2 rfp_lookup_bcdata.csv
++ sort -t, -k1,1
++ echo timestamp,content,watershed_groups,source,description
++ join -t, -1 2 -2 1 -a 1 -o 1.1,1.2,1.3,1.4,2.2 temp_sorted.csv rfp_lookup_bcdata_sorted.csv
++ ogr2ogr -append -f GPKG background_layers.gpkg output.csv -nln rfp_tracking
++ rm temp.csv temp_sorted.csv rfp_lookup_bcdata_sorted.csv output.csv
++ echo 'bcdata layers are now loaded to background_layers.gpkg'
+bcdata layers are now loaded to background_layers.gpkg
+
+real	0m9.323s
+user	0m6.413s
+sys	0m0.773s
+
+=== rfp_source_aws.sh ===
++ '[' 1 -eq 0 ']'
++ check_format ''\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
++ local 'input='\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
++ [[ ! 'BULK', 'MORR', 'KLUM' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''BULK'\'', '\''MORR'\'', '\''KLUM'\'''
+Watershed groups format is correct: 'BULK', 'MORR', 'KLUM'
++ GPKG=background_layers.gpkg
++ SOURCES=rfp_source_aws.txt
++ [[ ! -f background_layers.gpkg ]]
++ echo 'Updateing project area from watershed group boundaries: '\''BULK'\'',' ''\''MORR'\'',' ''\''KLUM'\'''
+Updateing project area from watershed group boundaries: 'BULK', 'MORR', 'KLUM'
++ rm -f aoi.geojson
++ bcdata dump WHSE_BASEMAPPING.FWA_WATERSHED_GROUPS_POLY --query 'WATERSHED_GROUP_CODE in ('\''BULK'\'', '\''MORR'\'', '\''KLUM'\'')' -l
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_basemapping.fwa_watershed_groups_poly aoi.geojson
+++ fio info background_layers.gpkg --layer whse_basemapping.fwa_watershed_groups_poly --bounds
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:161: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  op = oneOf(" ".join(op_map.keys())).set_parse_action(
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:180: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  higher_func = oneOf(" ".join(higher_func_map.keys())).set_parse_action(
++ BOUNDS='777012.656 962946.677 1005784.525 1165199.106'
+++ echo '[777012.656 962946.677 1005784.525 1165199.106]'
+++ tr ' ,' ,
+++ rio transform --src_crs EPSG:3005 --dst_crs EPSG:4326
+++ tr -d '[] '
++ BOUNDS_LL=-129.38033259160906,53.62375711953149,-125.90826802812964,55.48346104379861
++ echo 'Clipping lateral habitat tiff to project area'
+Clipping lateral habitat tiff to project area
++ ogr2ogr -f GeoJSON aoi_alb.geojson -t_srs EPSG:3005 aoi.geojson
++ rio mask /vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/habitat_lateral.tif habitat_lateral.tif --overwrite --crop --geojson-mask aoi_alb.geojson
++ rm aoi_alb.geojson
++ echo 'Getting bcfishpass and supporting layers from s3'
+Getting bcfishpass and supporting layers from s3
+++ grep -v '^#' rfp_source_aws.txt
++ FGB_SOURCES='bcfishpass.crossings_vw
+whse_forest_tenure.ften_road_section_lines_svw
+bcfishobs.fiss_fish_obsrvtn_events_vw'
+++ mktemp -d
++ TMPDIR=/var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU
++ trap 'rm -rf /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU' EXIT
++ for layer in '$FGB_SOURCES'
++ echo 'Processing bcfishpass.crossings_vw...'
+Processing bcfishpass.crossings_vw...
++ wget -q -O /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishpass.crossings_vw.fgb.zip https://newgraph.s3.us-west-2.amazonaws.com/bcfishpass.crossings_vw.fgb.zip
+  HTTP/1.1 200 OK
+  x-amz-id-2: vzfD2uJtMVQL9/dfG2BGRNjErCXD0yu0HcytvXYKTe9aMkQ82OwZzlfmXRkyYgqMRgZi88ygrMOioTiigVgExg==
+  x-amz-request-id: G059VPWP472X5PZ3
+  Date: Fri, 23 Jan 2026 01:31:00 GMT
+  Last-Modified: Sun, 18 Jan 2026 03:35:53 GMT
+  ETag: "8f66ad811ecdabaf8a87cd2fb2c8cc33-4"
+  x-amz-server-side-encryption: AES256
+  Accept-Ranges: bytes
+  Content-Type: binary/octet-stream
+  Content-Length: 157852079
+  Server: AmazonS3
++ unzip -q -o /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishpass.crossings_vw.fgb.zip -d /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln bcfishpass.crossings_vw -t_srs EPSG:3005 -dim XY -spat 777012.656 962946.677 1005784.525 1165199.106 -spat_srs EPSG:3005 -where 'watershed_group_code in ('\''BULK'\'', '\''MORR'\'', '\''KLUM'\'')' /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishpass.crossings_vw.fgb bcfishpass.crossings_vw
++ rm -f /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishpass.crossings_vw.fgb.zip /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishpass.crossings_vw.fgb
++ for layer in '$FGB_SOURCES'
++ echo 'Processing whse_forest_tenure.ften_road_section_lines_svw...'
+Processing whse_forest_tenure.ften_road_section_lines_svw...
++ wget -q -O /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/whse_forest_tenure.ften_road_section_lines_svw.fgb.zip https://newgraph.s3.us-west-2.amazonaws.com/whse_forest_tenure.ften_road_section_lines_svw.fgb.zip
+  HTTP/1.1 200 OK
+  x-amz-id-2: AdQndqq3kxUeutrcSlhkK8Zkx6ZkyLF+CmDJQIGXbfj/3mUwFnCMIKrMroqIEede7WChmit92NA=
+  x-amz-request-id: ZGS31FS6WM7C05TG
+  Date: Fri, 23 Jan 2026 01:31:43 GMT
+  Last-Modified: Sun, 18 Jan 2026 04:08:59 GMT
+  ETag: "8be01d35169dcd1bff93e35f744f16a9-5"
+  x-amz-server-side-encryption: AES256
+  Accept-Ranges: bytes
+  Content-Type: binary/octet-stream
+  Content-Length: 217708747
+  Server: AmazonS3
++ unzip -q -o /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/whse_forest_tenure.ften_road_section_lines_svw.fgb.zip -d /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln whse_forest_tenure.ften_road_section_lines_svw -t_srs EPSG:3005 -dim XY -spat 777012.656 962946.677 1005784.525 1165199.106 -spat_srs EPSG:3005 -where 'watershed_group_code in ('\''BULK'\'', '\''MORR'\'', '\''KLUM'\'')' /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/whse_forest_tenure.ften_road_section_lines_svw.fgb whse_forest_tenure.ften_road_section_lines_svw
++ rm -f /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/whse_forest_tenure.ften_road_section_lines_svw.fgb.zip /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/whse_forest_tenure.ften_road_section_lines_svw.fgb
++ for layer in '$FGB_SOURCES'
++ echo 'Processing bcfishobs.fiss_fish_obsrvtn_events_vw...'
+Processing bcfishobs.fiss_fish_obsrvtn_events_vw...
++ wget -q -O /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishobs.fiss_fish_obsrvtn_events_vw.fgb.zip https://newgraph.s3.us-west-2.amazonaws.com/bcfishobs.fiss_fish_obsrvtn_events_vw.fgb.zip
+  HTTP/1.1 200 OK
+  x-amz-id-2: 9Wp/uJPJRELsAJrPhR3w49CdqqoCTEK1WXwl4nDWoBwMan2c3CkY4yAnXRDds4fXq80yLOst8EGL3T9nDAXQUzQDEsoOqoMH
+  x-amz-request-id: BYZ8GEG85897FKA7
+  Date: Fri, 23 Jan 2026 01:32:49 GMT
+  Last-Modified: Sun, 18 Jan 2026 03:50:35 GMT
+  ETag: "7b3b2217c344a2af963cf26fbeca117f"
+  x-amz-server-side-encryption: AES256
+  Accept-Ranges: bytes
+  Content-Type: binary/octet-stream
+  Content-Length: 14598721
+  Server: AmazonS3
++ unzip -q -o /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishobs.fiss_fish_obsrvtn_events_vw.fgb.zip -d /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln bcfishobs.fiss_fish_obsrvtn_events_vw -t_srs EPSG:3005 -dim XY -spat 777012.656 962946.677 1005784.525 1165199.106 -spat_srs EPSG:3005 -where 'watershed_group_code in ('\''BULK'\'', '\''MORR'\'', '\''KLUM'\'')' /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishobs.fiss_fish_obsrvtn_events_vw.fgb bcfishobs.fiss_fish_obsrvtn_events_vw
++ rm -f /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishobs.fiss_fish_obsrvtn_events_vw.fgb.zip /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU/bcfishobs.fiss_fish_obsrvtn_events_vw.fgb
++ echo 'Getting model parameter info from aws'
+Getting model parameter info from aws
++ CSVS=("parameters_habitat_method" "parameters_habitat_thresholds")
++ for layer in '"${CSVS[@]}"'
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln parameters_habitat_method /vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/parameters_habitat_method.csv
++ for layer in '"${CSVS[@]}"'
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln parameters_habitat_thresholds /vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/parameters_habitat_thresholds.csv
++ echo 'Getting named streams from fwapg feature service'
+Getting named streams from fwapg feature service
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_basemapping.fwa_named_streams -clipsrc aoi.geojson -clipsrclayer aoi 'https://features.hillcrestgeo.ca/fwa/collections/whse_basemapping.fwa_named_streams/items.json?bbox=-129.38033259160906,53.62375711953149,-125.90826802812964,55.48346104379861'
+Warning 1: A geometry of type LINESTRING is inserted into layer whse_basemapping.fwa_named_streams of geometry type MULTILINESTRING, which is not normally allowed by the GeoPackage specification, but the driver will however do it. To create a conformant GeoPackage, if using ogr2ogr, the -nlt option can be used to override the layer geometry type. This warning will no longer be emitted for this combination of layer and feature geometry type.
++ echo 'Creating a record of the layers that were loaded'
+Creating a record of the layers that were loaded
+++ date '+%Y-%m-%d %H:%M'
++ TIMESTAMP='2026-01-22 17:32'
++ awk -v 'timestamp=2026-01-22 17:32' -v 'watershed_groups='\''BULK'\'', '\''MORR'\'', '\''KLUM'\''' -v source=rfp_source_aws.txt 'BEGIN{gsub(",", "", watershed_groups)} !/^#/ && NF > 0 {print timestamp "," $0 "," watershed_groups "," source}' rfp_source_aws.txt
++ sort -t, -k2,2 temp.csv
++ tail -n +2 rfp_lookup_bcdata.csv
++ sort -t, -k1,1
++ echo timestamp,content,watershed_groups,source,description
++ join -t, -1 2 -2 1 -a 1 -o 1.1,1.2,1.3,1.4,2.2 temp_sorted.csv rfp_lookup_bcdata_sorted.csv
++ ogr2ogr -append -f GPKG background_layers.gpkg output.csv -nln rfp_tracking
++ rm temp.csv temp_sorted.csv rfp_lookup_bcdata_sorted.csv output.csv
++ echo 'layers stored on aws are now loaded to background_layers.gpkg'
+layers stored on aws are now loaded to background_layers.gpkg
++ rm -rf /var/folders/mg/h910y2c54fsc99qj74dyrjph0000gn/T/tmp.5AJqtYUqUU
+
+real	2m14.796s
+user	0m14.743s
+sys	0m4.477s
+
+=== rfp_qgis_create.sh ===
++ '[' 2 -lt 2 ']'
++ PROJECT_NAME=test_download
++ QGIS_FILE=bcrestoration_mobile.qgs
++ echo 'Generating QGIS project in Projects/gis/: test_download' 'with QGIS file: bcrestoration_mobile.qgs'
+Generating QGIS project in Projects/gis/: test_download with QGIS file: bcrestoration_mobile.qgs
++ mkdir -p /Users/airvine/Projects/gis/test_download
++ mv background_layers.gpkg /Users/airvine/Projects/gis/test_download/
++ mv habitat_lateral.tif /Users/airvine/Projects/gis/test_download/
++ cp ../../data/qgis/bcrestoration_mobile.qgs /Users/airvine/Projects/gis/test_download/test_download.qgs
++ cp ../../data/qgis/form_pscis.gpkg /Users/airvine/Projects/gis/test_download/
++ cp ../../data/qgis/form_fiss_site.gpkg /Users/airvine/Projects/gis/test_download/
++ mkdir -p /Users/airvine/Projects/gis/test_download/ignore_mobile/photos
++ touch /Users/airvine/Projects/gis/test_download/ignore_mobile/photos/photos.txt
++ cp -R ../../data/methods /Users/airvine/Projects/gis/test_download/ignore_mobile/methods
++ cp -R ../../data/templates /Users/airvine/Projects/gis/test_download/ignore_mobile/templates
+
+real	0m0.024s
+user	0m0.007s
+sys	0m0.014s

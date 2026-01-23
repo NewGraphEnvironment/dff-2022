@@ -1,0 +1,142 @@
+=== Performance Test: rfp_visi_002_7wshd ===
+Watershed groups: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
+Template: bcrestoration_mobile.qgs
+Date: Thu Jan 22 20:11:22 PST 2026
+
+=== rfp_source_bcdata.sh ===
++ '[' 1 -eq 0 ']'
++ check_format ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'input='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ [[ ! 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Watershed groups format is correct: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ set +u
++ operation=generate
++ set -u
++ rm -f aoi.geojson
++ GPKG=background_layers.gpkg
++ SOURCES=rfp_source_bcdata.txt
++ [[ generate == \u\p\d\a\t\e ]]
++ [[ -f background_layers.gpkg ]]
++ [[ generate == \u\p\d\a\t\e ]]
++ echo 'Generating a new one...'
+Generating a new one...
++ process_geopackage ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'watersheds='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local operation=
++ echo 'Processing watershed group boundaries: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Processing watershed group boundaries: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ rm -f aoi.geojson
++ bcdata dump WHSE_BASEMAPPING.FWA_WATERSHED_GROUPS_POLY --query 'WATERSHED_GROUP_CODE in ('\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'')' -l
++ local update_option=
++ [[ '' == \u\p\d\a\t\e ]]
++ ogr2ogr -f GPKG background_layers.gpkg -overwrite -t_srs EPSG:3005 -nln whse_basemapping.fwa_watershed_groups_poly aoi.geojson
+++ fio info aoi.geojson --layer aoi --bounds
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:161: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  op = oneOf(" ".join(op_map.keys())).set_parse_action(
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:180: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  higher_func = oneOf(" ".join(higher_func_map.keys())).set_parse_action(
++ BOUNDS='1011046.501 1030602.792 1329819.727 1304445.966'
+++ echo '[1011046.501 1030602.792 1329819.727 1304445.966]'
+++ tr ' ,' ,
+++ rio transform --src_crs EPSG:3005 --dst_crs EPSG:4326
+++ tr -d '[] '
++ BOUNDS_LL=-125.82995015719438,54.2775593892027,-120.61168778390247,56.618668685318745
++ echo 'Getting BC Data Catalogue layers - this may take a while'
+Getting BC Data Catalogue layers - this may take a while
+++ grep -v '^#' rfp_source_bcdata.txt
++ BCGW_SOURCES='reg_legal_and_admin_boundaries.qsoi_bc_regions
+whse_admin_boundaries.clab_indian_reserves
+whse_fish.pscis_assessment_svw'
++ for layer in '$BCGW_SOURCES'
++ '[' '!' -f ./reg_legal_and_admin_boundaries.qsoi_bc_regions.geojson ']'
++ set -e
++ bcdata dump reg_legal_and_admin_boundaries.qsoi_bc_regions --bounds '1011046.501 1030602.792 1329819.727 1304445.966' --bounds-crs EPSG:3005 -l
++ for layer in '$BCGW_SOURCES'
++ '[' '!' -f ./whse_admin_boundaries.clab_indian_reserves.geojson ']'
++ set -e
++ bcdata dump whse_admin_boundaries.clab_indian_reserves --bounds '1011046.501 1030602.792 1329819.727 1304445.966' --bounds-crs EPSG:3005 -l
++ for layer in '$BCGW_SOURCES'
++ '[' '!' -f ./whse_fish.pscis_assessment_svw.geojson ']'
++ set -e
++ bcdata dump whse_fish.pscis_assessment_svw --bounds '1011046.501 1030602.792 1329819.727 1304445.966' --bounds-crs EPSG:3005 -l
++ find . -maxdepth 1 -type f -name '*.fwa_*' -size -50c -delete
+++ find . -maxdepth 1 -type f -name '*.geojson' -a '!' -name aoi.geojson -exec basename '{}' .geojson ';'
++ BCGW_SOURCES_CLEANED='whse_admin_boundaries.clab_indian_reserves
+whse_fish.pscis_assessment_svw
+reg_legal_and_admin_boundaries.qsoi_bc_regions'
++ for layer in '$BCGW_SOURCES_CLEANED'
++ [[ whse_admin_boundaries.clab_indian_reserves == *\.\f\w\a\_* ]]
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_admin_boundaries.clab_indian_reserves -dim XY -clipsrc aoi.geojson -clipsrclayer aoi whse_admin_boundaries.clab_indian_reserves.geojson
++ for layer in '$BCGW_SOURCES_CLEANED'
++ [[ whse_fish.pscis_assessment_svw == *\.\f\w\a\_* ]]
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_fish.pscis_assessment_svw -dim XY -clipsrc aoi.geojson -clipsrclayer aoi whse_fish.pscis_assessment_svw.geojson
++ for layer in '$BCGW_SOURCES_CLEANED'
++ [[ reg_legal_and_admin_boundaries.qsoi_bc_regions == *\.\f\w\a\_* ]]
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln reg_legal_and_admin_boundaries.qsoi_bc_regions -dim XY -clipsrc aoi.geojson -clipsrclayer aoi reg_legal_and_admin_boundaries.qsoi_bc_regions.geojson
++ echo 'Creating a record of the layers that were loaded'
+Creating a record of the layers that were loaded
+++ date '+%Y-%m-%d %H:%M'
++ TIMESTAMP='2026-01-22 20:11'
++ awk -v 'timestamp=2026-01-22 20:11' -v 'watershed_groups='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\''' -v source=rfp_source_bcdata.txt 'BEGIN{gsub(",", "", watershed_groups)} !/^#/ && NF > 0 {print timestamp "," $0 "," watershed_groups "," source}' rfp_source_bcdata.txt
++ sort -t, -k2,2 temp.csv
++ tail -n +2 rfp_lookup_bcdata.csv
++ sort -t, -k1,1
++ echo timestamp,content,watershed_groups,source,description
++ join -t, -1 2 -2 1 -a 1 -o 1.1,1.2,1.3,1.4,2.2 temp_sorted.csv rfp_lookup_bcdata_sorted.csv
++ ogr2ogr -append -f GPKG background_layers.gpkg output.csv -nln rfp_tracking
++ rm temp.csv temp_sorted.csv rfp_lookup_bcdata_sorted.csv output.csv
++ echo 'bcdata layers are now loaded to background_layers.gpkg'
+bcdata layers are now loaded to background_layers.gpkg
+
+real	0m13.740s
+user	0m3.820s
+sys	0m0.681s
+
+=== rfp_source_aws.sh ===
++ '[' 1 -eq 0 ']'
++ check_format ''\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ local 'input='\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
++ [[ ! 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA' =~ ^'[^']+'(, *'[^']+')*$ ]]
++ echo 'Watershed groups format is correct: '\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'''
+Watershed groups format is correct: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ GPKG=background_layers.gpkg
++ SOURCES=rfp_source_aws.txt
++ [[ ! -f background_layers.gpkg ]]
++ echo 'Updateing project area from watershed group boundaries: '\''CRKD'\'',' ''\''CARP'\'',' ''\''PARS'\'',' ''\''NATR'\'',' ''\''PARA'\'',' ''\''UPCE'\'',' ''\''PCEA'\'''
+Updateing project area from watershed group boundaries: 'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'
++ rm -f aoi.geojson
++ bcdata dump WHSE_BASEMAPPING.FWA_WATERSHED_GROUPS_POLY --query 'WATERSHED_GROUP_CODE in ('\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'')' -l
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -t_srs EPSG:3005 -nln whse_basemapping.fwa_watershed_groups_poly aoi.geojson
+++ fio info background_layers.gpkg --layer whse_basemapping.fwa_watershed_groups_poly --bounds
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:161: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  op = oneOf(" ".join(op_map.keys())).set_parse_action(
+/opt/homebrew/Caskroom/miniconda/base/envs/dff_test/lib/python3.12/site-packages/fiona/_vendor/snuggs.py:180: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  higher_func = oneOf(" ".join(higher_func_map.keys())).set_parse_action(
++ BOUNDS='1011046.501 1030602.792 1329819.727 1304445.966'
+++ echo '[1011046.501 1030602.792 1329819.727 1304445.966]'
+++ tr ' ,' ,
+++ rio transform --src_crs EPSG:3005 --dst_crs EPSG:4326
+++ tr -d '[] '
++ BOUNDS_LL=-125.82995015719438,54.2775593892027,-120.61168778390247,56.618668685318745
++ echo 'Clipping lateral habitat tiff to project area'
+Clipping lateral habitat tiff to project area
++ ogr2ogr -f GeoJSON aoi_alb.geojson -t_srs EPSG:3005 aoi.geojson
++ rio mask /vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/habitat_lateral.tif habitat_lateral.tif --overwrite --crop --geojson-mask aoi_alb.geojson
++ rm aoi_alb.geojson
++ echo 'Getting bcfishpass and supporting layers from s3'
+Getting bcfishpass and supporting layers from s3
+++ grep -v '^#' rfp_source_aws.txt
++ FGB_SOURCES='bcfishpass.crossings_vw
+bcfishpass.streams_vw
+whse_basemapping.transport_line
+whse_cadastre.pmbc_parcel_fabric_poly_svw
+whse_fish.fiss_obstacles_pnt_sp
+whse_forest_tenure.ften_range_poly_carto_vw
+whse_forest_tenure.ften_road_section_lines_svw
+whse_forest_vegetation.veg_comp_lyr_r1_poly
+bcfishobs.fiss_fish_obsrvtn_events_vw'
++ for layer in '$FGB_SOURCES'
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln bcfishpass.crossings_vw -t_srs EPSG:3005 -dim XY -spat 1011046.501 1030602.792 1329819.727 1304445.966 -spat_srs EPSG:3005 -where 'watershed_group_code in ('\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'')' /vsizip/vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/bcfishpass.crossings_vw.fgb.zip bcfishpass.crossings_vw
++ for layer in '$FGB_SOURCES'
++ ogr2ogr -f GPKG background_layers.gpkg -update -overwrite -nln bcfishpass.streams_vw -t_srs EPSG:3005 -dim XY -spat 1011046.501 1030602.792 1329819.727 1304445.966 -spat_srs EPSG:3005 -where 'watershed_group_code in ('\''CRKD'\'', '\''CARP'\'', '\''PARS'\'', '\''NATR'\'', '\''PARA'\'', '\''UPCE'\'', '\''PCEA'\'')' /vsizip/vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/bcfishpass.streams_vw.fgb.zip bcfishpass.streams_vw
