@@ -1,28 +1,48 @@
-# in order for this to build mergin-client - on a mac - we need to run below in the terminal first - see https://github.com/MerginMaps/mergin-py-client/issues/164
+# Unified conda environment for dff-2022
+# Supports both QGIS project creation (rfp scripts) and Mergin Maps sync
+#
+# Create: conda env create -f environment.yml
+# Activate: conda activate dff
+#
+# Note for macOS mergin-client build issues, see:
+# https://github.com/MerginMaps/mergin-py-client/issues/164
+# May need: export SQLite3_ROOT=/opt/homebrew/Cellar/sqlite/<version>/
 
-    # export SQLite3_ROOT=/opt/homebrew/Cellar/sqlite/3.40.1/
-
-name: dff2
-variables:
-  PGHOST: localhost
-  PGUSER: postgres
-  PGPORT: 5432
-  PGDATABASE: bcfishpass
-  DATABASE_URL: postgresql://postgres@localhost:5432/bcfishpass
-  MERGIN_USERNAME: newgraph_airvine
+name: dff
 
 channels:
   - conda-forge
   - defaults
+
 dependencies:
+  # Core system tools
+  - python>=3.11,<3.13
   - wget
   - zip
   - unzip
-  - python==3.11.7
-  #- sqlite
+
+  # GDAL/geospatial stack (from conda for CLI tools + libraries)
+  # Provides ogr2ogr, ogrinfo, gdalinfo, etc.
+  - gdal
+  # Provides fio CLI (fio info, fio cat, etc.)
+  - fiona
+  # Provides rio CLI (rio mask, rio transform, etc.)
+  - rasterio
+  # Supporting geospatial libs
+  - pyproj
+  - shapely
+
+  # Utilities from conda
+  - requests
+  - pyyaml
+  - lxml
+
+  # Pip for packages not in conda-forge or better from pip
   - pip
   - pip:
+      # Mergin Maps sync
       - mergin-client
+      # BC Data Catalogue access
       - bcdata
-
-
+      # COG support for rasterio
+      - rio-cogeo

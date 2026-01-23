@@ -106,8 +106,8 @@ fi
 
 
 # get bounding box of aoi in BC Albers and WGS84 (lon/lat)
-BOUNDS_LL=$(fio info aoi.geojson --layer aoi --bounds)
-BOUNDS=$(echo "[$BOUNDS_LL]" | tr ' ', ',' | rio transform --src_crs EPSG:4326 --dst_crs EPSG:3005 | tr -d '[] ')
+BOUNDS=$(fio info aoi.geojson --layer aoi --bounds)
+BOUNDS_LL=$(echo "[$BOUNDS]" | tr ' ', ',' | rio transform --src_crs EPSG:3005 --dst_crs EPSG:4326 | tr -d '[] ')
 
 
 # ---------------

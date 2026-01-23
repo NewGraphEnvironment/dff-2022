@@ -1,10 +1,12 @@
 # `rfp_source_bcdata.sh`, `rfp_source_aws.sh`, `rfp_source_fwa.sh` and `rfp_qgis_create_bcfishpass.sh`
 These are the scripts for creating QGIS projects.  
 
-Requires virtual environment built with follow run from **`scripts/qgis`** (mergin-client environment is in main directory and title dff2):
-    
+Requires virtual environment built from **repo root directory** (`dff-2022/`):
+
     conda env create -f environment.yml
     conda activate dff
+
+**Note:** Environment includes all dependencies for both QGIS project creation (bcdata, GDAL, rasterio, fiona) and Mergin Maps sync (mergin-client).
 
 **Note: Project directory defined in call to 
 `qgis_create.sh` must not be present at ~Projects/gis/{project_directory} or it will not be created.**
@@ -83,10 +85,10 @@ of this repo.
 **Or run everything at the same time**
   		
 
-    time ./rfp_source_bcdata.sh "'BULK', 'KLUM'" && 
-    time ./rfp_source_aws.sh "'BULK', 'KLUM'" && 
-    time ./rfp_source_fwa.sh "'BULK', 'KLUM'" && 
-    time ./rfp_qgis_create.sh "rfp_test" "bcrestoration_mobile.qgs"
+    time ./rfp_source_bcdata.sh "'ADMS'" && 
+    time ./rfp_source_aws.sh "'ADMS'" && 
+    time ./rfp_source_fwa.sh "'ADMS'" && 
+    time ./rfp_qgis_create.sh "rfp_test4" "bcrestoration_mobile.qgs"
 
 
 **For updates to existing projects we copy the `background_layers.gpkg` from an existing project to the repo then run one or more of 
@@ -112,9 +114,76 @@ Move the `gpkg` and the `tiff` back to its directory:
     
     mv ~/Projects/repo/dff-2022/scripts/qgis/habitat_lateral.tif ~/Projects/gis/rfp_test/habitat_lateral.tif
     
-Note - if `background_layers.gpkg` is present and `update` is not provided as the second argument to `rfp_source_bcdata.sh` 
+Note - if `background_layers.gpkg` is present and `update` is not provided as the second argument to `rfp_source_bcdata.sh`
 the script will ask the user if they want to start over (yes) or update the existing geopackage (no).
-    
 
+
+## Performance Testing
+
+Performance tests are available to compare different approaches for downloading and processing layers. Tests run the full workflow (bcdata → aws → fwa → create) and log timing for each step.
+
+### Running Performance Tests
+
+Run a full workflow test with automated logging:
+
+```bash
+# Test with single watershed group
+./test_performance.sh "test_project_name" "'ADMS'" "bcrestoration_mobile.qgs"
+
+# Test with multiple watershed groups
+./test_performance.sh "test_bulk" "'BULK', 'MORR', 'KLUM'" "bcrestoration_mobile.qgs"
+```
+
+Test results are saved to `logs/test_<project_name>_<timestamp>.log`.
+
+### Generating Performance Summaries
+
+Extract timing data from test logs and append to CSV:
+
+```bash
+# Process all logs in logs/ directory (default)
+./test_performance_sum.sh
+
+# Process specific logs
+./test_performance_sum.sh logs/20260122_*.log
+```
+
+This **appends** results to `test_performance_sum.csv` with columns for:
+- **test_id**: Test identifier
+- **datetime**: When the test ran (YYYY-MM-DD HH:MM:SS)
+- **method**: Streaming or download approach
+- **watersheds**: Number of watershed groups
+- **layers**: Number of AWS layers processed
+- **bcdata_s, aws_s, fwa_s, create_s**: Timing for each step (seconds)
+- **total_s**: Total execution time (seconds)
+- **notes**: Errors or issues encountered
+
+**Appending behavior:** Results accumulate in the CSV - you can delete processed logs to save space while preserving performance data.
+
+### Performance Findings
+
+**Current approach comparison (rfp_source_aws.sh):**
+
+Two methods tested for downloading S3 layers:
+- **Streaming**: `/vsizip/vsicurl/` - streams zipped files over HTTP, unzips on-the-fly
+- **Download-first**: Downloads zip locally with wget, unzips, processes, cleans up
+
+**Results:**
+- Small scale (1 watershed, 3 layers): Streaming slightly faster
+- Medium scale (3 watersheds, 3 layers): Download-first ~6% faster
+- Large scale (7 watersheds, 9 layers): Download-first ~2% faster
+
+Download-first advantage increases with more watershed groups (more clipping operations on the same downloaded file).
+
+**Network conditions impact:** Concurrent S3 operations (backups/uploads) significantly slow streaming performance. Use `kill -STOP $(pgrep s3cmd)` to pause, `kill -CONT $(pgrep s3cmd)` to resume.
+
+Test results tracked in `logs/` directory for reproducibility and SRED documentation.
+
+
+## Create a Mergin project and share
+
+    mergin create newgraph/rfp_test --from-dir ~/Projects/gis/rfp_test
+
+    mergin share-add newgraph/rfp_test newgraph_bute --permissions writer
 
 
