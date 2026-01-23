@@ -1,10 +1,12 @@
 # `rfp_source_bcdata.sh`, `rfp_source_aws.sh`, `rfp_source_fwa.sh` and `rfp_qgis_create_bcfishpass.sh`
 These are the scripts for creating QGIS projects.  
 
-Requires virtual environment built with follow run from **`scripts/qgis`** (mergin-client environment is in main directory and title dff2):
-    
+Requires virtual environment built from **repo root directory** (`dff-2022/`):
+
     conda env create -f environment.yml
     conda activate dff
+
+**Note:** Environment includes all dependencies for both QGIS project creation (bcdata, GDAL, rasterio, fiona) and Mergin Maps sync (mergin-client).
 
 **Note: Project directory defined in call to 
 `qgis_create.sh` must not be present at ~Projects/gis/{project_directory} or it will not be created.**
@@ -136,24 +138,27 @@ Test results are saved to `logs/test_<project_name>_<timestamp>.log`.
 
 ### Generating Performance Summaries
 
-Parse test logs into a markdown summary table:
+Extract timing data from test logs and append to CSV:
 
 ```bash
-# With explicit file pattern
-./test_performance_sum.sh logs/test_*.log
-
-# Or use the default (no arguments needed)
+# Process all logs in logs/ directory (default)
 ./test_performance_sum.sh
 
-# Or specific files
-./test_performance_sum.sh logs/test_visi_20260122.log logs/test_dl_20260122.log
+# Process specific logs
+./test_performance_sum.sh logs/20260122_*.log
 ```
 
-This generates `test_performance_sum.md` with timing comparisons showing:
-- Test configuration (watershed groups, layer count)
-- Individual step timing (bcdata, aws, fwa, create)
-- Total execution time
-- Notes on any errors or issues
+This **appends** results to `test_performance_sum.csv` with columns for:
+- **test_id**: Test identifier
+- **datetime**: When the test ran (YYYY-MM-DD HH:MM:SS)
+- **method**: Streaming or download approach
+- **watersheds**: Number of watershed groups
+- **layers**: Number of AWS layers processed
+- **bcdata_s, aws_s, fwa_s, create_s**: Timing for each step (seconds)
+- **total_s**: Total execution time (seconds)
+- **notes**: Errors or issues encountered
+
+**Appending behavior:** Results accumulate in the CSV - you can delete processed logs to save space while preserving performance data.
 
 ### Performance Findings
 

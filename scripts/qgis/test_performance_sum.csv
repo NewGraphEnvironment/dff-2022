@@ -1,0 +1,6 @@
+test_id,datetime,method,watersheds,layers,bcdata_s,aws_s,fwa_s,create_s,total_s,notes
+test_perf_old_full,2026-01-22 20:06:28,streaming,7,?,0.0,0.0,0.1,0.02,0.1,Env issue
+test_rfp_visi_002_7wshd,2026-01-22 20:11:22,streaming,7,?,13.7,956.7,4.9,0.08,975.4,ERRORS
+test_rfp_dl_002_7wshd,2026-01-22 20:27:37,download,7,16,11.4,939.1,4.8,0.04,955.4,Missing layers
+test_rfp_visi_003_7wshd_7aws_layers,2026-01-22 20:56:10,streaming,7,?,24.3,1008.1,15.1,0.04,1047.6,
+test_rfp_dl_003_7wshd_7aws_layers,2026-01-22 21:13:37,download,7,14,24.3,692.6,4.6,0.04,721.5,
