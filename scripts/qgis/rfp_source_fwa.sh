@@ -70,20 +70,9 @@ process_geopackage() {
 
 # Main script logic
 if [[ -f "$TARGET" ]]; then
-    if [[ "$operation" == "update" ]]; then
-        echo "Updating existing $TARGET with area of interest..."
-        process_geopackage "$1" "update"
-    else
-        read -p "Do you wish to start over with a new $TARGET? If you are updating existing project info say NO (y/n): " answer
-        if [[ $answer == "y" ]]; then
-            echo "Removing $TARGET..."
-            rm -f "$TARGET"
-            process_geopackage "$1"
-        else
-            echo "Updating existing $TARGET with area of interest..."
-            process_geopackage "$1" "update"
-        fi
-    fi
+    # Always update if file exists (assume update mode)
+    echo "Updating existing $TARGET with area of interest..."
+    process_geopackage "$1" "update"
 else
     if [[ "$operation" == "update" ]]; then
         # This block should never be reached due to the initial check, but it's here for logical completeness
