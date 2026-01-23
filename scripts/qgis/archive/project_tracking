@@ -1,3 +1,7 @@
+########## test_adms###################
+time ./rfp_source_bcdata.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'" && time ./rfp_source_aws.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'" && time ./rfp_source_fwa.sh "'CRKD', 'CARP', 'PARS', 'NATR', 'PARA', 'UPCE', 'PCEA'"
+
+
 ########## sern_peace_fwcp_2023###################
 -- time ./bcdata.sh "'CRKD', 'CARP', 'PARS'" && time ./background_layers.sh "'CRKD', 'CARP','PARS'"
 
