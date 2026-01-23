@@ -1,0 +1,6 @@
+# Ignore temporary monitoring outputs
+rfp_timing_*.log
+
+# But track committed test results (override above pattern)
+!download_first_*.log
+!vsizip_vsicurl_*.log

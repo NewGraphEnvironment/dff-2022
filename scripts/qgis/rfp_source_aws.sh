@@ -92,7 +92,19 @@ echo 'Getting bcfishpass and supporting layers from s3'
 # get a list of the aws layers to update
 FGB_SOURCES=$(grep -v '^#' $SOURCES)
 
+# Create temp directory for downloads
+TMPDIR=$(mktemp -d)
+trap "rm -rf $TMPDIR" EXIT
+
 for layer in $FGB_SOURCES; do
+  echo "Processing $layer..."
+
+  # Download and unzip to temp
+  wget -q -O "$TMPDIR/${layer}.fgb.zip" \
+    "https://newgraph.s3.us-west-2.amazonaws.com/${layer}.fgb.zip"
+  unzip -q -o "$TMPDIR/${layer}.fgb.zip" -d "$TMPDIR"
+
+  # Process locally (much faster)
   ogr2ogr \
     -f GPKG background_layers.gpkg \
     -update \
@@ -103,8 +115,11 @@ for layer in $FGB_SOURCES; do
     -spat $BOUNDS \
     -spat_srs EPSG:3005 \
     -where "watershed_group_code in ($1)" \
-    /vsizip/vsicurl/https://newgraph.s3.us-west-2.amazonaws.com/${layer}.fgb.zip \
+    "$TMPDIR/${layer}.fgb" \
     $layer
+
+  # Clean up this layer's files
+  rm -f "$TMPDIR/${layer}.fgb.zip" "$TMPDIR/${layer}.fgb"
 done
 
 # ---------------
