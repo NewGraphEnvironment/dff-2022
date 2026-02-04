@@ -6,10 +6,8 @@ d_raw <- readr::read_csv(
 ) |>
   dplyr::select(
     site_id,
-    # date_time_sample,
-    species_target
-    # makes it easier to see where manual changes are helpful
-    # source
+    species_target,
+    source
   ) |>
   dplyr::mutate(
     # Replace commas and periods with spaces
@@ -20,7 +18,14 @@ d_raw <- readr::read_csv(
       # Trim leading/trailing spaces
       stringr::str_trim() |>
       # Convert to uppercase
-      stringr::str_to_upper()
+      stringr::str_to_upper(),
+    # Map source path to region code (f=Fraser, s=Skeena, m=Mackenzie/Peace)
+    region = dplyr::case_when(
+      stringr::str_detect(source, "fraser") ~ "f",
+      stringr::str_detect(source, "skeena") ~ "s",
+      stringr::str_detect(source, "peace") ~ "m",
+      TRUE ~ "x"  # unknown
+    )
   ) |>
   dplyr::arrange(site_id)
 
@@ -280,6 +285,62 @@ site_plan <- site_plan |>
   dplyr::left_join(unbc_run_order, by = c("lab_group", "sp_code")) |>
   dplyr::arrange(lab_group, site_id, run_order_unbc)
 
+# Join region and source from d_raw
+site_region_lookup <- d_raw |>
+  dplyr::distinct(site_id, region, source)
+
+site_plan <- site_plan |>
+  dplyr::left_join(site_region_lookup, by = "site_id")
+
+# Generate id_lab: region + site_pattern_id + lab_group + row_number
+# Sort by region, lab_group, site_id first to get consistent row numbers
+site_plan <- site_plan |>
+  dplyr::arrange(region, lab_group, site_id, run_order_unbc)
+
+# Create pivot-wide version for lab (one row per site_id)
+# with id_lab = region + site_pattern_id + lab_group + row_number
+site_plan_wide <- site_plan |>
+  dplyr::group_by(site_id) |>
+  dplyr::summarise(
+    region = dplyr::first(region),
+    site_pattern_id = dplyr::first(site_pattern_id),
+    lab_group = dplyr::first(lab_group),
+    sheet_name_unbc = dplyr::first(sheet_name_unbc),
+    site_pattern = dplyr::first(site_pattern),
+    sp_code1 = sp_code[1],
+    sp_code2 = sp_code[2],
+    sp_code3 = sp_code[3],
+    sp_code4 = sp_code[4],
+    .groups = "drop"
+  ) |>
+  # Sort by region, lab_group, site_id for row numbering
+  dplyr::arrange(region, lab_group, site_id) |>
+  # Add row number (actual spreadsheet row, 1-indexed)
+  dplyr::mutate(
+    row_num = dplyr::row_number(),
+    # id_lab = region + site_pattern_id + lab_group (2-digit) + row (2-digit)
+    id_lab = paste0(
+      region,
+      site_pattern_id,
+      sprintf("%02d", lab_group),
+      sprintf("%02d", row_num)
+    )
+  ) |>
+  # Select only needed columns for lab
+  dplyr::select(
+    id_lab, site_id, sheet_name_unbc, lab_group,
+    sp_code1, sp_code2, sp_code3, sp_code4, site_pattern
+  )
+
+# Also add id_lab back to the long-form site_plan for reference
+id_lab_lookup <- site_plan_wide |>
+  dplyr::select(site_id, id_lab)
+
+site_plan <- site_plan |>
+  dplyr::left_join(id_lab_lookup, by = "site_id") |>
+  dplyr::relocate(id_lab, .after = site_id) |>
+  dplyr::relocate(region, source, .after = id_lab)
+
 # Summary of groups for verification
 cat("\n=== Lab Group Summary ===\n")
 group_summary <- site_plan |>
@@ -290,29 +351,41 @@ group_summary <- site_plan |>
   )
 print(group_summary, n = 20)
 
-# burn csv to the repo so we can point the lab to it
-path <- "~/Projects/repo/fish_passage_template_reporting/data/backup/2025/edna_species_for_UNBC.csv"
-fs::dir_create(fs::path_dir(path))
-site_plan |>
-  readr::write_excel_csv(path)
+# Export to edna_unbc/ directory for m1rr0r sync (one row per site_id with id_lab)
+# Use date suffix for versioning
+date_suffix <- format(Sys.Date(), "%Y%m%d")
+output_dir <- "~/Projects/repo/fish_passage_template_reporting/data/backup/2025/edna_unbc"
+fs::dir_create(output_dir)
 
-# Export to Excel with each group as a separate sheet (using UNBC's naming)
+# CSV - wide format with sp_code1-4
+path_csv <- file.path(output_dir, paste0("edna_for_UNBC_", date_suffix, ".csv"))
+site_plan_wide |>
+  readr::write_excel_csv(path_csv)
+cat("\nCSV saved to", path_csv, "\n")
+
+# Excel - wide format with grouped sheets
 wb <- openxlsx::createWorkbook()
 
-# Sheet 1: All data
-openxlsx::addWorksheet(wb, "edna_species_for_UNBC")
-openxlsx::writeData(wb, "edna_species_for_UNBC", site_plan)
+# Sheet 1: All data (wide format)
+openxlsx::addWorksheet(wb, "all_samples")
+openxlsx::writeData(wb, "all_samples", site_plan_wide)
 
-# Add a sheet for each group, named per UNBC convention
+# Add a sheet for each lab_group (wide format)
 for (i in seq_len(nrow(group_summary))) {
   grp <- group_summary$lab_group[i]
   sheet_name <- group_summary$sheet_name_unbc[i]
-  grp_data <- site_plan |> dplyr::filter(lab_group == grp)
+  grp_data <- site_plan_wide |> dplyr::filter(lab_group == grp)
   openxlsx::addWorksheet(wb, sheet_name)
   openxlsx::writeData(wb, sheet_name, grp_data)
 }
 
-path_xlsx <- "~/Projects/repo/fish_passage_template_reporting/data/backup/2025/edna_species_for_UNBC_grouped.xlsx"
+path_xlsx <- file.path(output_dir, paste0("edna_for_UNBC_", date_suffix, ".xlsx"))
 openxlsx::saveWorkbook(wb, path_xlsx, overwrite = TRUE)
-cat("\nExcel file saved to", path_xlsx, "\n")
+cat("Excel saved to", path_xlsx, "\n")
+
+# Print sample of id_lab values for QA
+cat("\n=== Sample id_lab values ===\n")
+site_plan_wide |>
+  dplyr::select(id_lab, site_id, sheet_name_unbc, sp_code1, sp_code2) |>
+  print(n = 15)
 
