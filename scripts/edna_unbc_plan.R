@@ -325,8 +325,17 @@ site_plan_wide <- site_plan |>
       sprintf("%02d", lab_group),
       sprintf("%02d", row_num)
     )
-  ) |>
-  # Select only needed columns for lab
+  )
+
+# Master reference with all id_lab components for decoding when samples return
+site_plan_master <- site_plan_wide |>
+  dplyr::select(
+    id_lab, row_num, region, site_pattern_id, lab_group,
+    site_id, sheet_name_unbc, sp_code1, sp_code2, sp_code3, sp_code4, site_pattern
+  )
+
+# Simplified version for lab (fewer columns)
+site_plan_wide <- site_plan_wide |>
   dplyr::select(
     id_lab, site_id, sheet_name_unbc, lab_group,
     sp_code1, sp_code2, sp_code3, sp_code4, site_pattern
@@ -382,6 +391,20 @@ for (i in seq_len(nrow(group_summary))) {
 path_xlsx <- file.path(output_dir, paste0("edna_for_UNBC_", date_suffix, ".xlsx"))
 openxlsx::saveWorkbook(wb, path_xlsx, overwrite = TRUE)
 cat("Excel saved to", path_xlsx, "\n")
+
+# Save master reference sheet (with all id_lab components) OUTSIDE edna_unbc/
+# This is for internal use to decode samples when results return - not for lab
+master_dir <- "~/Projects/repo/fish_passage_template_reporting/data/backup/2025"
+path_master_csv <- file.path(master_dir, paste0("edna_id_lab_master_", date_suffix, ".csv"))
+site_plan_master |>
+  readr::write_excel_csv(path_master_csv)
+cat("Master reference CSV saved to", path_master_csv, "\n")
+
+# Also add master as a sheet in the lab Excel for convenience
+openxlsx::addWorksheet(wb, "id_lab_reference")
+openxlsx::writeData(wb, "id_lab_reference", site_plan_master)
+openxlsx::saveWorkbook(wb, path_xlsx, overwrite = TRUE)
+cat("Added id_lab_reference sheet to Excel\n")
 
 # Print sample of id_lab values for QA
 cat("\n=== Sample id_lab values ===\n")
