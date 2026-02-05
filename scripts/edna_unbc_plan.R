@@ -334,10 +334,10 @@ site_plan_master <- site_plan_wide |>
     site_id, sheet_name_unbc, sp_code1, sp_code2, sp_code3, sp_code4, site_pattern
   )
 
-# Simplified version for lab (fewer columns)
+# Simplified version for lab (fewer columns, row_num first)
 site_plan_wide <- site_plan_wide |>
   dplyr::select(
-    id_lab, site_id, sheet_name_unbc, lab_group,
+    row_num, id_lab, site_id, sheet_name_unbc, lab_group,
     sp_code1, sp_code2, sp_code3, sp_code4, site_pattern
   )
 
