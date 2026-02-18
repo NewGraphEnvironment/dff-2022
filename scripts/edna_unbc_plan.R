@@ -412,3 +412,71 @@ site_plan_wide |>
   dplyr::select(id_lab, site_id, sheet_name_unbc, sp_code1, sp_code2) |>
   print(n = 15)
 
+# ---- Join envelope labels from xref for Caitlin's reconciliation ----
+# xref maps id_envelope -> list_site_id for samples where the physical
+# envelope doesn't match the site_id on the UNBC list (renames, transcription
+# errors, suffix issues). Adding id_envelope column so Caitlin can match
+# her envelopes directly to list rows.
+
+xref_path <- "~/Projects/repo/fish_passage_template_reporting/data/backup/2025/edna_unbc/edna_unbc_xref_site_repair.csv"
+if (file.exists(xref_path)) {
+  xref <- readr::read_csv(xref_path, show_col_types = FALSE) |>
+    dplyr::filter(!is.na(site_id) & site_id != "") |>
+    dplyr::select(id_envelope, site_id, category)
+
+  # Join to wide plan - site_id in xref matches site_id in plan
+  site_plan_wide <- site_plan_wide |>
+    dplyr::left_join(xref, by = "site_id") |>
+    dplyr::relocate(id_envelope, .after = site_id)
+
+  # Also join to master
+  site_plan_master <- site_plan_master |>
+    dplyr::left_join(
+      xref |> dplyr::select(id_envelope, site_id),
+      by = "site_id"
+    ) |>
+    dplyr::relocate(id_envelope, .after = site_id)
+
+  cat("\n=== Envelope label mismatches (xref applied) ===\n")
+  site_plan_wide |>
+    dplyr::filter(!is.na(id_envelope)) |>
+    dplyr::select(id_lab, site_id, id_envelope, category) |>
+    print(n = 30)
+
+  # Re-export with id_envelope column
+  # CSV
+  site_plan_wide |>
+    dplyr::select(-category) |>
+    readr::write_excel_csv(path_csv)
+  cat("\nCSV updated with id_envelope column\n")
+
+  # Excel - rebuild workbook with id_envelope
+  wb2 <- openxlsx::createWorkbook()
+
+  site_plan_wide_export <- site_plan_wide |> dplyr::select(-category)
+
+  openxlsx::addWorksheet(wb2, "all_samples")
+  openxlsx::writeData(wb2, "all_samples", site_plan_wide_export)
+
+  for (i in seq_len(nrow(group_summary))) {
+    grp <- group_summary$lab_group[i]
+    sheet_name <- group_summary$sheet_name_unbc[i]
+    grp_data <- site_plan_wide_export |> dplyr::filter(lab_group == grp)
+    openxlsx::addWorksheet(wb2, sheet_name)
+    openxlsx::writeData(wb2, sheet_name, grp_data)
+  }
+
+  openxlsx::addWorksheet(wb2, "id_lab_reference")
+  openxlsx::writeData(wb2, "id_lab_reference", site_plan_master)
+
+  openxlsx::saveWorkbook(wb2, path_xlsx, overwrite = TRUE)
+  cat("Excel updated with id_envelope column\n")
+
+  # Re-save master CSV
+  site_plan_master |>
+    readr::write_excel_csv(path_master_csv)
+  cat("Master CSV updated with id_envelope column\n")
+} else {
+  cat("\nNo xref file found at", xref_path, "- skipping envelope label join\n")
+}
+
