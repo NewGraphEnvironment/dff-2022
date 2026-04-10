@@ -747,7 +747,7 @@ Five repos form the governance and operations layer across all New Graph Environ
 | [compass](https://github.com/NewGraphEnvironment/compass) | Ethics, values, guiding principles | The "why" |
 | [soul](https://github.com/NewGraphEnvironment/soul) | Standards, skills, conventions for LLM agents | The "how" |
 | [compost](https://github.com/NewGraphEnvironment/compost) | Communications templates, email workflows, contact management | The "who" |
-| [awshak](https://github.com/NewGraphEnvironment/awshak) | Infrastructure as Code, deployment | The "where" |
+| [rtj](https://github.com/NewGraphEnvironment/rtj) (formerly awshak) | Infrastructure as Code, deployment | The "where" |
 | [gq](https://github.com/NewGraphEnvironment/gq) | Cartographic style management across QGIS, tmap, leaflet, web | The "look" |
 
 **Adaptive management:** Conventions evolve from real project work, not theory. When a pattern is learned or refined during project work, propagate it back to soul so all projects benefit. The `/claude-md-init` skill builds each project's `CLAUDE.md` from soul conventions.
@@ -877,6 +877,101 @@ Scripts and logs live together: `scripts/<module>/logs/`
 | Fish passage field/reporting | **Fish Passage 2025 (#6)** |
 | Restoration planning | **Aquatic Restoration Planning (#5)** |
 | QGIS, Mergin, field forms | **Collaborative GIS (#3)** |
+
+# Planning Conventions
+
+How Claude manages structured planning for complex tasks using planning-with-files (PWF).
+
+## When to Plan
+
+Use PWF when a task has multiple phases, requires research, or involves more than ~5 tool calls. Triggers:
+- User says "let's plan this", "plan mode", "use planning", or invokes `/planning-init`
+- Complex issue work begins (multi-step, uncertain approach)
+- Claude judges the task warrants structured tracking
+
+Skip planning for single-file edits, quick fixes, or tasks with obvious next steps.
+
+## The Workflow
+
+1. **Explore first** — Enter plan mode (read-only). Read code, trace paths, understand the problem before proposing anything.
+2. **Plan to files** — Write the plan into 3 files in `planning/active/`:
+   - `task_plan.md` — Phases with checkbox tasks
+   - `findings.md` — Research, discoveries, technical analysis
+   - `progress.md` — Session log with timestamps and commit refs
+3. **Commit the plan** — Commit the planning files before starting implementation. This is the baseline.
+4. **Work in atomic commits** — Each commit bundles code changes WITH checkbox updates in the planning files. The diff shows both what was done and the checkbox marking it done.
+5. **Archive when complete** — Move `planning/active/` to `planning/archive/` via `/planning-archive`.
+
+## Atomic Commits (Critical)
+
+Every commit that completes a planned task MUST include:
+- The code/script changes
+- The checkbox update in `task_plan.md` (`- [ ]` -> `- [x]`)
+- A progress entry in `progress.md` if meaningful
+
+This creates a git audit trail where `git log -- planning/` tells the full story. Each commit is self-documenting — you can backtrack with git and understand everything that happened.
+
+## File Formats
+
+### task_plan.md
+
+Phases with checkboxes. This is the core tracking file.
+
+```markdown
+# Task Plan
+
+## Phase 1: [Name]
+- [ ] Task description
+- [ ] Another task
+
+## Phase 2: [Name]
+- [ ] Task description
+```
+
+Mark tasks done as they're completed: `- [x] Task description`
+
+### findings.md
+
+Append-only research log. Discoveries, technical analysis, things learned.
+
+```markdown
+# Findings
+
+## [Topic]
+[What was found, with source/date]
+```
+
+### progress.md
+
+Session entries with commit references.
+
+```markdown
+# Progress
+
+## Session YYYY-MM-DD
+- Completed: [items]
+- Commits: [refs]
+- Next: [items]
+```
+
+## Directory Structure
+
+```
+planning/
+  active/          <- Current work (3 PWF files)
+  archive/         <- Completed issues
+    YYYY-MM-issue-N-slug/
+```
+
+If `planning/` doesn't exist in the repo, run `/planning-init` first.
+
+## Skills
+
+| Skill | When to use |
+|-------|-------------|
+| `/planning-init` | First time in a repo — creates directory structure |
+| `/planning-update` | Mid-session — sync checkboxes and progress |
+| `/planning-archive` | Issue complete — archive and create fresh active/ |
 
 # R Package Development Conventions
 
