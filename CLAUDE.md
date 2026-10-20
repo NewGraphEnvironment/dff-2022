@@ -17,7 +17,7 @@ R scripts in `scripts/` build geopackage-based field forms from provincial submi
 - **eDNA forms**: `edna_build.R` - Environmental DNA sampling
 - **Monitoring forms**: `monitoring_build_form.R` - Restoration monitoring
 
-Forms are written as `.gpkg` files to QGIS project directories (typically `~/Projects/gis/{project_name}/`).
+Forms are written as `.gpkg` files to QGIS project directories (typically `<gis-dir>/{project_name}/`, the GIS directory `scripts/qgis/rfp_qgis_create.sh` writes to).
 
 ### QGIS Project Creation (Shell Scripts)
 Scripts in `scripts/qgis/` download BC government spatial data and create QGIS projects:
@@ -56,15 +56,15 @@ time ./rfp_qgis_create.sh "project_name" "bcrestoration_mobile.qgs"
 
 **Update existing project**:
 ```bash
-# Copy gpkg from existing project to scripts/qgis/
-cp ~/Projects/gis/existing_project/background_layers.gpkg ~/Projects/repo/dff-2022/scripts/qgis/
+# Copy gpkg from existing project to scripts/qgis/ (run from scripts/qgis/)
+cp <gis-dir>/existing_project/background_layers.gpkg .
 
 # Run update with "update" flag
 time ./rfp_source_bcdata.sh "'BULK', 'KLUM'" "update"
 time ./rfp_source_aws.sh "'BULK', 'KLUM'"
 
 # Copy back
-mv ~/Projects/repo/dff-2022/scripts/qgis/background_layers.gpkg ~/Projects/gis/existing_project/
+mv background_layers.gpkg <gis-dir>/existing_project/
 ```
 
 ## Important Paths
@@ -93,7 +93,7 @@ Single unified conda environment `dff` (root `environment.yml`):
 
 ## Output Structure
 
-Created QGIS projects go to `~/Projects/gis/{project_name}/` containing:
+Created QGIS projects go to `<gis-dir>/{project_name}/` (the GIS directory is set in `scripts/qgis/rfp_qgis_create.sh`) containing:
 - `background_layers.gpkg` - BC government spatial layers clipped to watershed groups
 - `habitat_lateral.tif` - Habitat raster
 - `form_pscis.gpkg`, `form_fiss_site.gpkg` - Field form layers
