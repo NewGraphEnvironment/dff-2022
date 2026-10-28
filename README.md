@@ -20,6 +20,10 @@ QGIS project layers (with the exception of field forms) clipped to [watershed gr
 
 `qml` files which provide `QGIS` styling for forms are kept in the `data` directory along with `QGIS` project `qlr` file that can be used to provide styling for all project layers.
 
+## eDNA lookup tables
+
+The eDNA assay table (species, assay and dye) and the lab's group run order moved out of `data/` in 2026-10. The current copies are at [m1rr0r `dna/`](https://github.com/NewGraphEnvironment/m1rr0r/tree/main/dna).
+
 ## Code of Conduct
 
 Please note that the this project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

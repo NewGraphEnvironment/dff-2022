@@ -1,3 +1,7 @@
+# Superseded: the 2026 lab sheets are built by a separate pipeline. The assay and run-order
+# tables are read as they stood in 2025 (commit 878b4f3), so this reproduces the 2025 plan;
+# the current tables are at https://github.com/NewGraphEnvironment/m1rr0r/tree/main/dna
+
 # make map of site vs species ordered by the assay dye order to send to UNBC
 
 # read iin edna form
@@ -37,7 +41,7 @@ d_raw <- readr::read_csv(
 # )
 
 # read in the map of assays
-path <- "~/Projects/repo/dff-2022/data/edna_assays.csv"
+path <- "https://raw.githubusercontent.com/NewGraphEnvironment/dff-2022/878b4f3/data/edna_assays.csv"
 assay_raw <- readr::read_csv(path) |>
   # last string after dash is the assay_dye unless !is.na(assay_dye)
   dplyr::mutate(
@@ -276,7 +280,7 @@ site_plan <- site_plan |>
 
 # Read UNBC run order mapping (based on Caitlin's Excel)
 unbc_run_order <- readr::read_csv(
-  "~/Projects/repo/dff-2022/data/edna_group_run_order.csv",
+  "https://raw.githubusercontent.com/NewGraphEnvironment/dff-2022/878b4f3/data/edna_group_run_order.csv",
   show_col_types = FALSE
 )
 
